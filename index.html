@@ -90,6 +90,7 @@ tailwind.config = {
       <div data-page-node-id="pZ3UqgI8ya2NnCkKHeK7fw">
         <h1 class="text-3xl sm:text-4xl font-bold text-deep-900" data-page-node-id="KwHFi4EWfjyffz5NWbC1bM">今天有什么比赛？</h1>
         <p class="mt-3 text-sm sm:text-base text-deep-800" data-page-node-id="SifTduLU3rFIjteqy1f00b">所有时间已按你的时区（UTC+8）显示 · 凌晨比赛归入「明晨」</p>
+        <div class="mt-3"><span id="srcBadge" class="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-white/70 text-deep-800 backdrop-blur">数据加载中…</span></div>
         <div id="countdownBox" class="mt-5 inline-flex items-center gap-3 bg-white/70 backdrop-blur rounded-2xl px-5 py-3 shadow-card" data-page-node-id="OJHUzxnmTcFgA2NrFyR0aD">
           <span class="w-2 h-2 rounded-full bg-ok live-dot" data-page-node-id="WNt67UUBFHA9CXHf1jRdl0"></span>
           <div data-page-node-id="eV2Udg8NGhSJX7wcG9G5tf">
@@ -124,6 +125,7 @@ tailwind.config = {
   <div class="mt-12" data-page-node-id="GKRcIYP3Jj80GBzwihooJs">
     <div class="flex items-center gap-3 mb-4" data-page-node-id="4bjwMP3hhoHNR1ij8LM345">
       <h2 class="text-xl font-bold" data-page-node-id="sGjBoCu65T64SM598SpOHk">昨日赛果</h2>
+      <span class="text-xs text-ink-3">最近 48 小时已结束的比赛 · 按结束时间倒序</span>
       <span id="spoilerHint" class="text-xs text-ink-3 hidden" data-page-node-id="eaAeVUcSBZvkDsu06y6tdq">防剧透已开启 · 点击比分查看</span>
     </div>
     <div id="resultList" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3" data-page-node-id="2WxLQl0FBQzVpaS1RoVIeL"></div>
@@ -152,9 +154,22 @@ tailwind.config = {
 <div id="toastBox" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 space-y-2" data-page-node-id="bIHMsVHjBQP2tt4NOFRQjI"></div>
 
 <script>
-/* ================= Mock 数据（PRD：多项目赛程 + 渠道导航 + 赛前情报） ================= */
+/* ================= 数据层（真实接口 + mock 回退） ================= */
 const SPORT_NAME = {football:'足球', esports:'电竞', badminton:'羽毛球'};
 const SPORT_ICON = {football:'⚽', esports:'🎮', badminton:'🏸'};
+/* 电竞子项目图标（真实数据里 game 字段会带具体游戏） */
+const GAME_ICON = {lol:'🟦', csgo:'🔫', valorant:'🎯', dota2:'🛡️'};
+const GAME_NAME = {lol:'英雄联盟', csgo:'CS2', valorant:'无畏契约', dota2:'DOTA2'};
+
+/* 接口地址（按场景自动判定，也可手动指定 window.__API_BASE__ 覆盖）：
+   1. 手动指定 window.__API_BASE__ 时以它为准（后端在别的域名时用）
+   2. 双击文件打开（file://）→ 指向本地代理 http://localhost:8787（需先跑 server.js）
+   3. http / https 打开（本地 8787 或 Vercel 线上）→ 走【同域相对路径】/api/matches，零配置
+   拉取失败时会自动回退内置 demo 数据，页面不会白屏 */
+const API_BASE = window.__API_BASE__
+  ?? (location.protocol === 'file:' ? 'http://localhost:8787' : '');
+// http(s) 场景一律走真实接口（相对路径即为同域 /api/matches）；失败时由 loadMatches 内部回退 mock
+const USE_MOCK = false;
 
 function mk(day, hh, mm, sport, league, home, away, channels, info, followed=false){
   const d = new Date(); d.setDate(d.getDate()+day); d.setHours(hh, mm, 0, 0);
@@ -162,8 +177,85 @@ function mk(day, hh, mm, sport, league, home, away, channels, info, followed=fal
           sport, league, home, away, channels, info, followed, remind:false};
 }
 
-const MATCHES = [
-  /* —— 今天 —— */
+/* ============ 接口数据归一化 ============ */
+/* 把服务端返回的扁平结构，转成页面渲染需要的结构：
+   utcDate(ISO) → dt(Date 本地) / day(0..2 相对天) / time(HH:mm 本地) */
+function normalize(raw) {
+  const today = new Date(); today.setHours(0,0,0,0);
+  return raw.map(m => {
+    const dt = new Date(m.utcDate);
+    const dayKey = new Date(dt); dayKey.setHours(0,0,0,0);
+    const day = Math.round((dayKey - today) / 86400000);   // 0=今天 1=明天 2=后天
+    return {
+      id: m.id,
+      day,
+      dateKey: `${dayKey.getFullYear()}-${String(dayKey.getMonth()+1).padStart(2,'0')}-${String(dayKey.getDate()).padStart(2,'0')}`,
+      dt,
+      time: `${String(dt.getHours()).padStart(2,'0')}:${String(dt.getMinutes()).padStart(2,'0')}`,
+      sport: m.sport,
+      league: m.league,
+      home: m.home,
+      away: m.away,
+      channels: m.channels || [],
+      bo: m.bo || null,
+      game: m.game || null,                                 // 电竞子项目 lol/csgo/valorant/dota2
+      top: m.top || 0,                                      // 是否知名赛事
+      score: m.score || null,
+      status: m.status || null,
+      info: m.info || null,                                  // 免费数据源无情报，Modal 会优雅降级
+      followed: false, remind: false,
+    };
+  }).filter(m => m.day >= 0 && m.day <= 2);                   // 只留今天~后天
+}
+
+/* 赛果归一化：补一个「昨天 20:00」这样的时间标签，方便判断是哪天的比赛 */
+function normalizeResults(raw) {
+  const today = new Date(); today.setHours(0,0,0,0);
+  return raw.filter(r => r.utcDate).map(r => {
+    const dt = new Date(r.utcDate);
+    const dk = new Date(dt); dk.setHours(0,0,0,0);
+    const diff = Math.round((dk - today) / 86400000);
+    const dayLabel = diff === 0 ? '今天' : diff === -1 ? '昨天'
+                   : diff === -2 ? '前天' : `${dt.getMonth()+1}月${dt.getDate()}日`;
+    return {
+      sport: r.sport,
+      game: r.game || null,
+      league: r.league || '赛事',
+      home: r.home, away: r.away,
+      score: r.score || '—',
+      when: `${dayLabel} ${String(dt.getHours()).padStart(2,'0')}:${String(dt.getMinutes()).padStart(2,'0')}`,
+    };
+  });
+}
+
+/* ============ 拉取真实数据 ============ */
+let MATCHES = [];          // 由接口填充；拉取失败则回退 mock
+let DATA_SOURCE = 'mock';
+
+async function loadMatches() {
+  if (USE_MOCK) { MATCHES = MOCK_MATCHES; RESULTS = MOCK_RESULTS; DATA_SOURCE = 'mock'; return; }
+  const box = document.getElementById('matchList');
+  box.innerHTML = `<div class="bg-white rounded-xl shadow-card p-10 text-center text-ink-3 text-sm">
+      <span class="inline-block w-4 h-4 border-2 border-sea-300 border-t-sea-600 rounded-full animate-spin align-middle mr-2"></span>正在加载最新赛程…
+    </div>`;
+  try {
+    const res = await fetch(`${API_BASE}/api/matches`, { cache: 'no-store' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const { matches = [], results = [] } = await res.json();
+    MATCHES = normalize(matches);
+    if (results.length) RESULTS = normalizeResults(results);   // 昨日赛果一并通过接口带回
+    DATA_SOURCE = 'live';
+    if (!MATCHES.length) throw new Error('接口返回 0 场赛程');
+  } catch (e) {
+    console.warn('[loadMatches] 接口失败，回退 mock：', e.message);
+    MATCHES = MOCK_MATCHES; RESULTS = MOCK_RESULTS; DATA_SOURCE = 'mock';
+    toast('实时数据获取失败，已切换到演示数据', false);
+  }
+}
+
+/* ============ Mock 回退数据 ============ */
+const MOCK_MATCHES = [
+
   mk(0,19,0,'esports','LPL 夏季赛 · 季后赛','BLG','TES',
      [{n:'B站',free:1},{n:'虎牙',free:1}],
      {form:['BLG 近5场 4胜1负','TES 近5场 3胜2负'], h2h:'近6次交手 BLG 4胜2负', note:'季后赛败者组生死战，中路 knight 与 JackeyLove 的对位值得关注。'}, true),
@@ -210,16 +302,23 @@ const MATCHES = [
      {form:['国安 近5场 2胜3负','申花 近5场 4胜1负'], h2h:'近6次交手申花 3胜2平1负', note:'京沪德比，工体门票已售罄。'}),
 ];
 
-const RESULTS = [
+/* 昨日赛果：优先用接口 /api/matches 返回的 results 字段；接口没给就回退这几条示例 */
+const MOCK_RESULTS = [
   {sport:'football', league:'英超 · 第 6 轮', home:'曼联', away:'切尔西', score:'2 : 1'},
   {sport:'esports',  league:'LPL · 季后赛',   home:'JDG',  away:'WBG',   score:'3 : 1'},
   {sport:'badminton',league:'中国公开赛',     home:'郑思维/黄雅琼', away:'渡边勇大/东野有纱', score:'2 : 0'},
 ];
+let RESULTS = MOCK_RESULTS;
 
 /* ================= 状态 ================= */
 let curDay = 0, curSport = 'all', spoiler = false;
 const DAY_LABEL = ['今天','明天','后天'];
 const WD = ['日','一','二','三','四','五','六'];
+
+/* 给每场比赛打上「相对日」标签，供 Modal 显示 */
+function labelMatches(){
+  MATCHES.forEach(m => { m.dateLabel = DAY_LABEL[m.day] ?? `${m.dt.getMonth()+1}月${m.dt.getDate()}日`; });
+}
 
 /* ================= 日期条 ================= */
 function renderDateStrip(){
@@ -279,7 +378,7 @@ function renderMatches(){
             <span class="font-semibold text-[15px] truncate">${m.home} <span class="text-ink-3 font-normal">vs</span> ${m.away}</span>
             ${m.followed?`<svg width="12" height="12" viewBox="0 0 24 24" fill="#F5C542" stroke="#E0B02A" stroke-width="1.5" class="flex-shrink-0"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>`:''}
           </div>
-          <div class="text-xs text-ink-3 mt-0.5">${SPORT_ICON[m.sport]} ${m.league}</div>
+          <div class="text-xs text-ink-3 mt-0.5">${GAME_ICON[m.game] || SPORT_ICON[m.sport]} ${m.league}${m.bo?` <span class="text-sea-600 font-semibold">· ${m.bo}</span>`:''}</div>
           <div class="hidden sm:flex gap-1.5 mt-2 flex-wrap">${chBadges(m.channels)}</div>
         </div>
         <button onclick="event.stopPropagation();toggleRemind('${m.id}')" title="开赛前 30 分钟提醒"
@@ -295,14 +394,22 @@ function renderMatches(){
 /* ================= 昨日赛果（防剧透） ================= */
 function renderResults(){
   const box = document.getElementById('resultList');
-  box.innerHTML = RESULTS.map((r,i)=>`
+  if(!RESULTS.length){
+    box.innerHTML = `<div class="bg-white rounded-xl shadow-card px-5 py-6 text-center text-ink-3 text-sm">最近两天没有已结束的比赛</div>`;
+    document.getElementById('spoilerHint').classList.add('hidden');
+    return;
+  }
+  box.innerHTML = RESULTS.map((r,i)=>{
+    const icon = r.game ? (GAME_ICON[r.game] || SPORT_ICON[r.sport]) : SPORT_ICON[r.sport];
+    return `
     <div class="bg-white rounded-xl shadow-card px-5 py-4">
-      <div class="text-[11px] font-bold text-ink-3 tracking-wider mb-2">${SPORT_ICON[r.sport]} ${r.league}</div>
+      <div class="text-[11px] font-bold text-ink-3 tracking-wider mb-2">${icon} ${r.league}${r.when?` · ${r.when}`:''}</div>
       <div class="flex items-center justify-between gap-2">
         <div class="text-sm font-semibold flex-1">${r.home}<br><span class="text-ink-2">${r.away}</span></div>
         <div class="score font-num text-xl font-bold text-sea-700 ${spoiler?'spoiler-blur':''}" data-i="${i}">${spoiler?'0 : 0':r.score}</div>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
   if(spoiler){
     box.querySelectorAll('.score').forEach(el=>{
       el.onclick = ()=>{el.textContent = RESULTS[el.dataset.i].score; el.classList.remove('spoiler-blur');};
@@ -327,31 +434,37 @@ function updateFollowCount(){
 /* ================= 赛前情报卡 ================= */
 function openModal(id){
   const m = MATCHES.find(x=>x.id===id);
+  const info = m.info;
+  // 免费数据源没有情报数据，优雅降级而不是报错
+  const infoBlock = info ? `
+      <div class="mt-5 bg-sea-50 rounded-xl p-4">
+        <div class="text-xs font-bold text-sea-700 mb-2">赛前情报卡</div>
+        ${info.form?.length?`<div class="text-sm text-ink-2 space-y-1">${info.form.map(f=>`<div>· ${f}</div>`).join('')}</div>`:''}
+        <div class="text-sm text-ink-2 mt-1">· 交锋记录：${info.h2h||'—'}</div>
+        ${info.note?`<div class="text-sm text-ink-1 mt-2 leading-relaxed">${info.note}</div>`:''}
+      </div>`
+    : `<div class="mt-5 bg-sea-50 rounded-xl p-4 text-sm text-ink-3">
+         · 该场次暂无赛前情报数据（阵容 / 伤停需接入付费数据源）
+       </div>`;
   document.getElementById('modalPanel').innerHTML = `
     <div class="p-6">
       <div class="flex items-start justify-between gap-3">
         <div>
-          <div class="text-[11px] font-bold text-ink-3 tracking-wider">${SPORT_ICON[m.sport]} ${m.league}</div>
+          <div class="text-[11px] font-bold text-ink-3 tracking-wider">${GAME_ICON[m.game] || SPORT_ICON[m.sport]} ${m.league}</div>
           <h3 class="text-xl font-bold mt-1">${m.home} <span class="text-ink-3 font-normal">vs</span> ${m.away}</h3>
-          <div class="text-sm text-sea-700 font-num font-bold mt-1">${DAY_LABEL[m.day]} ${m.time} 开赛</div>
+          <div class="text-sm text-sea-700 font-num font-bold mt-1">${m.dateLabel||DAY_LABEL[m.day]} ${m.time} 开赛${m.bo?` · ${m.bo}`:''}</div>
         </div>
         <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-sea-50 hover:bg-sea-100 flex items-center justify-center text-ink-2 flex-shrink-0">✕</button>
       </div>
-      <div class="flex gap-1.5 mt-4 flex-wrap">${chBadges(m.channels)}</div>
-
-      <div class="mt-5 bg-sea-50 rounded-xl p-4">
-        <div class="text-xs font-bold text-sea-700 mb-2">赛前情报卡</div>
-        ${m.info.form.length?`<div class="text-sm text-ink-2 space-y-1">${m.info.form.map(f=>`<div>· ${f}</div>`).join('')}</div>`:''}
-        <div class="text-sm text-ink-2 mt-1">· 交锋记录：${m.info.h2h}</div>
-        <div class="text-sm text-ink-1 mt-2 leading-relaxed">${m.info.note}</div>
-      </div>
+      <div class="flex gap-1.5 mt-4 flex-wrap">${chBadges(m.channels)||'<span class="text-xs text-ink-3">暂无渠道信息</span>'}</div>
+      ${infoBlock}
 
       <div class="flex gap-3 mt-5">
         <button onclick="toggleRemind('${m.id}');closeModal()"
           class="flex-1 ${m.remind?'bg-sea-100 text-sea-700':'bg-daisy hover:bg-daisy-hover text-[#5C4400]'} font-semibold text-sm py-3 rounded-full transition-colors">
           ${m.remind?'已设置提醒 · 点击取消':'开赛前 30 分钟提醒我'}
         </button>
-        <a href="#" onclick="event.preventDefault();toast('演示环境：实际产品将跳转到直播平台',true)"
+        <a href="#" onclick="event.preventDefault();toast('实际产品将跳转到直播平台（需接入各家深链）',true)"
           class="flex-1 bg-sea-500 hover:bg-sea-600 text-white font-semibold text-sm py-3 rounded-full text-center transition-colors">去观赛</a>
       </div>
     </div>`;
@@ -414,8 +527,29 @@ document.getElementById('followBtn').onclick = ()=>{
 };
 
 /* ================= 初始化 ================= */
-renderDateStrip(); renderMatches(); renderResults(); updateFollowCount(); tick();
-setInterval(tick, 1000);
+(async function init(){
+  renderDateStrip();
+  renderResults();                       // 先用示例赛果占位，避免首屏空白
+  document.getElementById('matchList').innerHTML = '';
+  await loadMatches();                   // 先取数（赛程 + 昨日赛果一并带回），再渲染
+  labelMatches();
+  const badge = document.getElementById('srcBadge');
+  if (badge) {
+    badge.textContent = DATA_SOURCE === 'live'
+      ? `实时数据 · 共 ${MATCHES.length} 场 · ${new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})} 更新`
+      : `演示数据（未接入接口）· ${MATCHES.length} 场`;
+    badge.className = `text-[11px] font-semibold px-2.5 py-1 rounded-full backdrop-blur ${DATA_SOURCE==='live'?'bg-white/70 text-deep-800':'bg-daisy-soft text-[#7A5B00]'}`;
+  }
+  renderResults();                       // 接口拿到赛果就重绘（拿不到则保持示例）
+  renderMatches(); updateFollowCount(); tick();
+  setInterval(tick, 1000);
+  // 页面可见时自动刷新赛程（切回标签页不会看到过期数据）
+  document.addEventListener('visibilitychange', async ()=>{
+    if(!document.hidden && !USE_MOCK){
+      await loadMatches(); labelMatches(); renderMatches(); renderResults(); updateFollowCount();
+    }
+  });
+})();
 </script>
 </body>
 </html>

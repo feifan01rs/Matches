@@ -1,3 +1,11 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json"
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "functions": {
+    "api/matches.js": {
+      "includeFiles": "lib/**"
+    },
+    "api/selfcheck.js": {
+      "includeFiles": "lib/**"
+    }
+  }
 }

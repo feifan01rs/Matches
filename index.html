@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="5UHmsFi3vo1BYPOPJpjkwO">
+<head data-page-node-id="V4DD8ZN0YsOArYoeBD7w5w">
+<meta charset="UTF-8" data-page-node-id="Y8qAqqWMBqHQ4LtXxQCwC3">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="R8tCkgWTT39QCbu6dsVkGu">
+<title>海风看球 · 观赛预告</title>
+<style>
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;background:#EAF6FB;color:#1E3A4C}
+  /* 油画笔触质感（仅 Hero 使用） */
+  .oil-hero{
+    background:linear-gradient(120deg,#BCDFE8 0%,#93D4EC 42%,#7CCFEA 68%,#5AB9DE 100%);
+    position:relative;overflow:hidden}
+  .oil-hero::before{content:"";position:absolute;inset:0;
+    background:repeating-linear-gradient(90deg,rgba(255,255,255,.07) 0 2px,transparent 2px 7px);pointer-events:none}
+  .oil-hero::after{content:"";position:absolute;inset:0;
+    background:radial-gradient(ellipse 420px 200px at 78% 30%,rgba(255,255,255,.35),transparent 70%);pointer-events:none}
+  .brush-band{background:linear-gradient(90deg,#BCDFE8 0%,#7CCFEA 55%,#5AB9DE 100%);position:relative}
+  .brush-band::after{content:"";position:absolute;inset:0;
+    background:repeating-linear-gradient(90deg,rgba(255,255,255,.06) 0 2px,transparent 2px 6px)}
+  .card{transition:transform .18s ease,box-shadow .18s ease}
+  .card:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(46,96,133,.16)}
+  .tab-btn{transition:all .15s}
+  .spoiler-blur{filter:blur(7px);user-select:none;cursor:pointer}
+  .toast{animation:toast-in .25s ease}
+  @keyframes toast-in{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
+  .modal-bg{animation:fade-in .2s ease}
+  @keyframes fade-in{from{opacity:0}to{opacity:1}}
+  .modal-panel{animation:slide-up .22s ease}
+  @keyframes slide-up{from{transform:translateY(24px);opacity:0}to{transform:translateY(0);opacity:1}}
+  .live-dot{animation:pulse 1.4s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  ::-webkit-scrollbar{height:6px;width:6px}
+  ::-webkit-scrollbar-thumb{background:#93D4EC;border-radius:3px}
+</style>
+<!-- ===== Tailwind 本地编译（替代 cdn.tailwindcss.com；重建：node build/tw/build.mjs）===== -->
+<style id="tw-compiled">*,:after,:before{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/*! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com*/*,:after,:before{box-sizing:border-box;border:0 solid #e5e7eb}:after,:before{--tw-content:""}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0}fieldset,legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0}.-right-1\.5{right:-.375rem}.-top-1\.5{top:-.375rem}.bottom-6{bottom:1.5rem}.left-0\.5{left:.125rem}.left-1\/2{left:50%}.top-0{top:0}.top-0\.5{top:.125rem}.z-10{z-index:10}.z-20{z-index:20}.z-40{z-index:40}.z-50{z-index:50}.col-span-full{grid-column:1/-1}.mx-auto{margin-left:auto;margin-right:auto}.-mt-5{margin-top:-1.25rem}.mb-1{margin-bottom:.25rem}.mb-2{margin-bottom:.5rem}.mb-2\.5{margin-bottom:.625rem}.mb-3{margin-bottom:.75rem}.mb-4{margin-bottom:1rem}.ml-1{margin-left:.25rem}.mr-2{margin-right:.5rem}.mt-0\.5{margin-top:.125rem}.mt-1{margin-top:.25rem}.mt-12{margin-top:3rem}.mt-16{margin-top:4rem}.mt-2{margin-top:.5rem}.mt-3{margin-top:.75rem}.mt-4{margin-top:1rem}.mt-5{margin-top:1.25rem}.mt-8{margin-top:2rem}.block{display:block}.inline-block{display:inline-block}.inline{display:inline}.flex{display:flex}.inline-flex{display:inline-flex}.grid{display:grid}.hidden{display:none}.h-14{height:3.5rem}.h-2{height:.5rem}.h-24{height:6rem}.h-4{height:1rem}.h-5{height:1.25rem}.h-8{height:2rem}.h-9{height:2.25rem}.h-\[18px\]{height:18px}.h-px{height:1px}.max-h-\[85vh\]{max-height:85vh}.min-h-screen{min-height:100vh}.w-10{width:2.5rem}.w-14{width:3.5rem}.w-2{width:.5rem}.w-4{width:1rem}.w-8{width:2rem}.w-9{width:2.25rem}.w-full{width:100%}.min-w-0{min-width:0}.min-w-\[18px\]{min-width:18px}.min-w-\[62px\]{min-width:62px}.max-w-2xl{max-width:42rem}.max-w-6xl{max-width:72rem}.flex-1{flex:1 1 0%}.flex-shrink-0{flex-shrink:0}.-translate-x-1\/2{--tw-translate-x:-50%}.-translate-x-1\/2,.transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}@keyframes spin{to{transform:rotate(1turn)}}.animate-spin{animation:spin 1s linear infinite}.cursor-pointer{cursor:pointer}.select-none{-webkit-user-select:none;-moz-user-select:none;user-select:none}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-end{align-items:flex-end}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1\.5{gap:.375rem}.gap-2{gap:.5rem}.gap-2\.5{gap:.625rem}.gap-3{gap:.75rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.gap-x-3{-moz-column-gap:.75rem;column-gap:.75rem}.gap-y-2{row-gap:.5rem}.space-y-1>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.25rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.25rem*var(--tw-space-y-reverse))}.space-y-2>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.5rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.5rem*var(--tw-space-y-reverse))}.space-y-3>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.75rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.75rem*var(--tw-space-y-reverse))}.self-end{align-self:flex-end}.overflow-x-auto{overflow-x:auto}.overflow-y-auto{overflow-y:auto}.truncate{overflow:hidden;text-overflow:ellipsis}.truncate,.whitespace-nowrap{white-space:nowrap}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-xl{border-radius:.75rem}.rounded-t-2xl{border-top-left-radius:1rem;border-top-right-radius:1rem}.border{border-width:1px}.border-2{border-width:2px}.border-b{border-bottom-width:1px}.border-l-4{border-left-width:4px}.border-dashed{border-style:dashed}.border-daisy{--tw-border-opacity:1;border-color:rgb(245 197 66/var(--tw-border-opacity,1))}.border-sea-100{--tw-border-opacity:1;border-color:rgb(216 238 248/var(--tw-border-opacity,1))}.border-sea-200{--tw-border-opacity:1;border-color:rgb(184 224 240/var(--tw-border-opacity,1))}.border-sea-300{--tw-border-opacity:1;border-color:rgb(147 212 236/var(--tw-border-opacity,1))}.border-t-sea-600{--tw-border-opacity:1;border-top-color:rgb(62 156 198/var(--tw-border-opacity,1))}.bg-\[\#E6F7EF\]{--tw-bg-opacity:1;background-color:rgb(230 247 239/var(--tw-bg-opacity,1))}.bg-cloud\/90{background-color:rgba(249,253,253,.9)}.bg-daisy{--tw-bg-opacity:1;background-color:rgb(245 197 66/var(--tw-bg-opacity,1))}.bg-daisy-soft{--tw-bg-opacity:1;background-color:rgb(253 243 215/var(--tw-bg-opacity,1))}.bg-deep-900{--tw-bg-opacity:1;background-color:rgb(33 44 70/var(--tw-bg-opacity,1))}.bg-deep-900\/50{background-color:rgba(33,44,70,.5)}.bg-ok{--tw-bg-opacity:1;background-color:rgb(52 181 143/var(--tw-bg-opacity,1))}.bg-sea-100{--tw-bg-opacity:1;background-color:rgb(216 238 248/var(--tw-bg-opacity,1))}.bg-sea-200{--tw-bg-opacity:1;background-color:rgb(184 224 240/var(--tw-bg-opacity,1))}.bg-sea-300{--tw-bg-opacity:1;background-color:rgb(147 212 236/var(--tw-bg-opacity,1))}.bg-sea-50{--tw-bg-opacity:1;background-color:rgb(234 246 251/var(--tw-bg-opacity,1))}.bg-sea-500{--tw-bg-opacity:1;background-color:rgb(90 185 222/var(--tw-bg-opacity,1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255/var(--tw-bg-opacity,1))}.bg-white\/70{background-color:hsla(0,0%,100%,.7)}.p-10{padding:2.5rem}.p-4{padding:1rem}.p-6{padding:1.5rem}.px-1{padding-left:.25rem;padding-right:.25rem}.px-2\.5{padding-left:.625rem;padding-right:.625rem}.px-3{padding-left:.75rem;padding-right:.75rem}.px-3\.5{padding-left:.875rem;padding-right:.875rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.py-1{padding-top:.25rem;padding-bottom:.25rem}.py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.py-10{padding-top:2.5rem;padding-bottom:2.5rem}.py-2{padding-top:.5rem;padding-bottom:.5rem}.py-3{padding-top:.75rem;padding-bottom:.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.py-8{padding-top:2rem;padding-bottom:2rem}.pb-1{padding-bottom:.25rem}.pb-2{padding-bottom:.5rem}.pt-2{padding-top:.5rem}.text-left{text-align:left}.text-center{text-align:center}.align-middle{vertical-align:middle}.font-num{font-family:DIN Alternate,Bahnschrift,Consolas,monospace}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-\[10px\]{font-size:10px}.text-\[11px\]{font-size:11px}.text-\[12px\]{font-size:12px}.text-\[15px\]{font-size:15px}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:.75rem;line-height:1rem}.font-bold{font-weight:700}.font-normal{font-weight:400}.font-semibold{font-weight:600}.leading-4{line-height:1rem}.leading-relaxed{line-height:1.625}.tracking-wide{letter-spacing:.025em}.tracking-wider{letter-spacing:.05em}.text-\[\#1E8A66\]{--tw-text-opacity:1;color:rgb(30 138 102/var(--tw-text-opacity,1))}.text-\[\#5C4400\]{--tw-text-opacity:1;color:rgb(92 68 0/var(--tw-text-opacity,1))}.text-\[\#7A5B00\]{--tw-text-opacity:1;color:rgb(122 91 0/var(--tw-text-opacity,1))}.text-deep-400{--tw-text-opacity:1;color:rgb(119 147 186/var(--tw-text-opacity,1))}.text-deep-800{--tw-text-opacity:1;color:rgb(46 62 97/var(--tw-text-opacity,1))}.text-deep-900{--tw-text-opacity:1;color:rgb(33 44 70/var(--tw-text-opacity,1))}.text-ink-1{--tw-text-opacity:1;color:rgb(30 58 76/var(--tw-text-opacity,1))}.text-ink-2{--tw-text-opacity:1;color:rgb(71 104 125/var(--tw-text-opacity,1))}.text-ink-3{--tw-text-opacity:1;color:rgb(125 154 173/var(--tw-text-opacity,1))}.text-ok{--tw-text-opacity:1;color:rgb(52 181 143/var(--tw-text-opacity,1))}.text-sea-100\/70{color:rgba(216,238,248,.7)}.text-sea-200{--tw-text-opacity:1;color:rgb(184 224 240/var(--tw-text-opacity,1))}.text-sea-50{--tw-text-opacity:1;color:rgb(234 246 251/var(--tw-text-opacity,1))}.text-sea-600{--tw-text-opacity:1;color:rgb(62 156 198/var(--tw-text-opacity,1))}.text-sea-700{--tw-text-opacity:1;color:rgb(53 127 163/var(--tw-text-opacity,1))}.text-warn{--tw-text-opacity:1;color:rgb(242 153 74/var(--tw-text-opacity,1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}.underline{text-decoration-line:underline}.opacity-40{opacity:.4}.shadow{--tw-shadow:0 1px 3px 0 rgba(0,0,0,.1),0 1px 2px -1px rgba(0,0,0,.1);--tw-shadow-colored:0 1px 3px 0 var(--tw-shadow-color),0 1px 2px -1px var(--tw-shadow-color)}.shadow,.shadow-card{box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-card{--tw-shadow:0 4px 14px rgba(46,96,133,.12);--tw-shadow-colored:0 4px 14px var(--tw-shadow-color)}.shadow-pop{--tw-shadow:0 12px 32px rgba(46,96,133,.16);--tw-shadow-colored:0 12px 32px var(--tw-shadow-color)}.shadow-pop,.shadow-sm{box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgba(0,0,0,.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color)}.filter{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.backdrop-blur{--tw-backdrop-blur:blur(8px)}.backdrop-blur,.backdrop-blur-sm{-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.backdrop-blur-sm{--tw-backdrop-blur:blur(4px)}.transition{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,-webkit-backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter,-webkit-backdrop-filter;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-colors{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.hover\:bg-daisy-hover:hover{--tw-bg-opacity:1;background-color:rgb(224 176 42/var(--tw-bg-opacity,1))}.hover\:bg-sea-100:hover{--tw-bg-opacity:1;background-color:rgb(216 238 248/var(--tw-bg-opacity,1))}.hover\:bg-sea-50:hover{--tw-bg-opacity:1;background-color:rgb(234 246 251/var(--tw-bg-opacity,1))}.hover\:bg-sea-600:hover{--tw-bg-opacity:1;background-color:rgb(62 156 198/var(--tw-bg-opacity,1))}.hover\:text-ink-1:hover{--tw-text-opacity:1;color:rgb(30 58 76/var(--tw-text-opacity,1))}.hover\:text-sea-800:hover{--tw-text-opacity:1;color:rgb(47 102 133/var(--tw-text-opacity,1))}@media (min-width:640px){.sm\:inline{display:inline}.sm\:flex{display:flex}.sm\:max-w-lg{max-width:32rem}.sm\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.sm\:items-center{align-items:center}.sm\:gap-4{gap:1rem}.sm\:rounded-2xl{border-radius:1rem}.sm\:p-5{padding:1.25rem}.sm\:px-5{padding-left:1.25rem;padding-right:1.25rem}.sm\:px-6{padding-left:1.5rem;padding-right:1.5rem}.sm\:py-14{padding-top:3.5rem;padding-bottom:3.5rem}.sm\:text-4xl{font-size:2.25rem;line-height:2.5rem}.sm\:text-base{font-size:1rem;line-height:1.5rem}}@media (min-width:768px){.md\:block{display:block}}@media (min-width:1024px){.lg\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}}</style>
+
+</head>
+<body class="min-h-screen" data-page-node-id="sg2GOmTrhg1oNJj3elN6PT">
+
+<!-- ============ 顶部导航 ============ -->
+<header class="sticky top-0 z-40 bg-cloud/90 backdrop-blur border-b border-sea-100 shadow-sm" data-page-node-id="ABKfx4vCnvyygBGuNLLv1T">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center gap-3" data-page-node-id="ZubTpDTMCZ3B45dDi9hGwn">
+    <div class="flex items-center gap-2" data-page-node-id="DFI8Ny2TvodP6eGBGDzchP">
+      <svg width="26" height="26" viewBox="0 0 72 72" data-page-node-id="TWLvKwGF0b3Wlkyjafrmj1"><g transform="translate(36,36)" data-page-node-id="gthISYNA5aMNAvZYUBL1AR"><g fill="#FFFFFF" stroke="#93D4EC" stroke-width="2" data-page-node-id="2ba0qETZ6DByLFo35XUxLd"><ellipse cx="0" cy="-16" rx="6" ry="14" data-page-node-id="sq7wW5Al5B7svUgf1kO5Pp"/><ellipse cx="14" cy="-8" rx="6" ry="14" transform="rotate(60 14 -8)" data-page-node-id="GF4DVYSErZeNjD5VCZIDze"/><ellipse cx="14" cy="8" rx="6" ry="14" transform="rotate(120 14 8)" data-page-node-id="W04HqzfpebGt56CH4h6SYG"/><ellipse cx="0" cy="16" rx="6" ry="14" data-page-node-id="SsdNkFEmb5JZyxfWOAvVMo"/><ellipse cx="-14" cy="8" rx="6" ry="14" transform="rotate(60 -14 8)" data-page-node-id="et0XTtzbBtmuKXtFVezo9a"/><ellipse cx="-14" cy="-8" rx="6" ry="14" transform="rotate(120 -14 -8)" data-page-node-id="jX7W3tcCwJAEhYFBMqmmzT"/></g><circle r="7" fill="#F5C542" data-page-node-id="Trc4OG7TWX16DNZwd7xzYM"/></g></svg>
+      <span class="font-bold text-lg tracking-wide text-ink-1" data-page-node-id="BAuERlrnWCj0qg3PlcRdoS">海风看球</span>
+      <span class="hidden sm:inline text-xs text-ink-3 mt-1" data-page-node-id="YC0ApqJ9y3kvpo29SGbO6b">观赛信息 · 一站直达</span>
+    </div>
+    <div class="flex-1" data-page-node-id="Yh3JIhF5rTYdJhz4n8Io1W"></div>
+    <!-- 防剧透开关 -->
+    <label class="flex items-center gap-2 cursor-pointer select-none" data-page-node-id="KzCBgd4a7UvTiWY0GEVGIE">
+      <span class="text-xs text-ink-2 hidden sm:inline" data-page-node-id="FYCCRI1ygS8caEXhNCwfLs">防剧透</span>
+      <div id="spoilerSwitch" class="w-10 h-5.5 h-5 rounded-full bg-sea-200 relative transition-colors" data-page-node-id="tukZvMb4ppaW2j5Y9ZIyLn">
+        <div id="spoilerKnob" class="absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow transition-all" data-page-node-id="sIY06E5VCP1QcOWS49EP1F"></div>
+      </div>
+    </label>
+    <button id="followBtn" class="relative flex items-center gap-1.5 bg-sea-50 hover:bg-sea-100 text-sea-700 text-xs font-semibold px-3.5 py-2 rounded-full transition-colors" data-page-node-id="IhdZNtyQ3w5XGkEBtYzS7g">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="#F5C542" stroke="#E0B02A" stroke-width="1.5" data-page-node-id="G7OwxgOcmfrs2rPziuEYnK"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z" data-page-node-id="OMiltXdTKoVwHDcpjd4oX8"/></svg>
+      我的关注
+      <span id="followCount" class="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-daisy text-[10px] font-bold text-[#5C4400] flex items-center justify-center" data-page-node-id="zbTWHGNqHdYtBU4vH6wzG4">0</span>
+    </button>
+  </div>
+</header>
+
+<!-- ============ Hero ============ -->
+<section class="oil-hero" data-page-node-id="r3aQpTahcIQqCng1UYrRjm">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-14 relative z-10" data-page-node-id="3O10F83xnfNdmQBDdJWu8C">
+    <div class="flex flex-wrap items-end gap-6 justify-between" data-page-node-id="ecsCheEo3K2O6byb0JSJIz">
+      <div data-page-node-id="pZ3UqgI8ya2NnCkKHeK7fw">
+        <h1 class="text-3xl sm:text-4xl font-bold text-deep-900" data-page-node-id="KwHFi4EWfjyffz5NWbC1bM">近半个月，有什么比赛？</h1>
+        <p class="mt-3 text-sm sm:text-base text-deep-800" data-page-node-id="SifTduLU3rFIjteqy1f00b">过去 15 天赛果 → 未来 15 天预告 · 所有时间已按你的时区（UTC+8）显示</p>
+        <div class="mt-3"><span id="srcBadge" class="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-white/70 text-deep-800 backdrop-blur">数据加载中…</span></div>
+        <!-- 接口诊断横幅：接口失败时显示确切原因，避免「显示演示数据」成为一个无法定位的黑盒 -->
+        <div id="apiDiag" class="hidden mt-3 max-w-2xl text-left text-[12px] leading-relaxed rounded-2xl bg-white shadow-card px-4 py-3 text-deep-800 border-l-4 border-daisy"></div>
+        <div id="countdownBox" class="mt-5 inline-flex items-center gap-3 bg-white/70 backdrop-blur rounded-2xl px-5 py-3 shadow-card" data-page-node-id="OJHUzxnmTcFgA2NrFyR0aD">
+          <span class="w-2 h-2 rounded-full bg-ok live-dot" data-page-node-id="WNt67UUBFHA9CXHf1jRdl0"></span>
+          <div data-page-node-id="eV2Udg8NGhSJX7wcG9G5tf">
+            <div id="cdTitle" class="text-sm font-semibold text-ink-1" data-page-node-id="XNKvwy26mh22TfH1DE09V6">—</div>
+            <div class="text-xs text-ink-3" data-page-node-id="WyFLBqlhvTSYFoFwoqPkMf">距开赛 <span id="cdTime" class="font-num font-bold text-sea-700 text-sm" data-page-node-id="cbXSroQ9AJwboeRxH5ootJ">--:--:--</span></div>
+          </div>
+        </div>
+      </div>
+      <svg class="hidden md:block" width="96" height="96" viewBox="0 0 72 72" data-page-node-id="L7n6Z3eAG1mBcFBIdvoCBB"><g transform="translate(36,36)" data-page-node-id="ZE4pyvx33nZ2CFxXoAAVv1"><g fill="#FFFFFF" stroke="#D8E8EE" stroke-width="1" data-page-node-id="CYD5qgX1CfUXQDa23Arapi"><ellipse cx="0" cy="-16" rx="6" ry="14" data-page-node-id="yUpnxH7otag9ZPGxrL180h"/><ellipse cx="14" cy="-8" rx="6" ry="14" transform="rotate(60 14 -8)" data-page-node-id="7pI8LgR3sfOkOXoF8P33of"/><ellipse cx="14" cy="8" rx="6" ry="14" transform="rotate(120 14 8)" data-page-node-id="QFH89yQyvASh3brKR5MDkE"/><ellipse cx="0" cy="16" rx="6" ry="14" data-page-node-id="P2XuAnqLHyLE2BkbDPU8wI"/><ellipse cx="-14" cy="8" rx="6" ry="14" transform="rotate(60 -14 8)" data-page-node-id="cm4zR3ODq5xDdPGMreQYvf"/><ellipse cx="-14" cy="-8" rx="6" ry="14" transform="rotate(120 -14 -8)" data-page-node-id="84pIF6V1Yzl4kpmG2EXZmV"/></g><circle r="7" fill="#F5C542" data-page-node-id="zoxFXer05brxxLx3L8gqHb"/></g></svg>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 日期条 + 项目筛选 ============ -->
+<section class="max-w-6xl mx-auto px-4 sm:px-6 -mt-5 relative z-20" data-page-node-id="eZofl1qDdrlue5Yjyxjina">
+  <div class="bg-white rounded-2xl shadow-card p-4 sm:p-5" data-page-node-id="8Gn3oSV8u5s6BHBrmnum8b">
+    <div class="flex items-center justify-between mb-2.5" data-page-node-id="dateStripHead">
+      <span class="text-[11px] font-bold text-ink-3 tracking-wider">赛程预告 · 未来 15 天</span>
+      <button id="backToday" class="hidden text-[11px] font-semibold text-sea-700 hover:text-sea-800 transition-colors" data-page-node-id="backTodayBtn">← 回到今天</button>
+    </div>
+    <div id="dateStrip" class="flex gap-2 overflow-x-auto pb-1" data-page-node-id="70A6lXUDeGe9uzhCxMDQ9v"></div>
+    <div class="flex gap-2 mt-4 overflow-x-auto pb-1" id="sportTabs" data-page-node-id="MeKQKlDBfSEyZQ70uTaOSM">
+      <button data-sport="all" class="tab-btn sport-tab whitespace-nowrap px-4 py-2 rounded-full text-sm font-semibold bg-deep-900 text-white" data-page-node-id="U4xjHxZaUzW91G5JJySHX6">全部</button>
+      <button data-sport="football" class="tab-btn sport-tab whitespace-nowrap px-4 py-2 rounded-full text-sm font-semibold bg-sea-50 text-sea-700 hover:bg-sea-100" data-page-node-id="aVvqhN6Bl9RTtRL9FgnjeZ">⚽ 足球</button>
+      <button data-sport="esports" class="tab-btn sport-tab whitespace-nowrap px-4 py-2 rounded-full text-sm font-semibold bg-sea-50 text-sea-700 hover:bg-sea-100" data-page-node-id="Hxd7Fe7QDTCwhFWspavbKQ">🎮 电竞</button>
+      <button data-sport="badminton" class="tab-btn sport-tab whitespace-nowrap px-4 py-2 rounded-full text-sm font-semibold bg-sea-50 text-sea-700 hover:bg-sea-100" data-page-node-id="7zRH6DflPRm5lftACkH8yT">🏸 羽毛球</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 赛程列表 ============ -->
+<main class="max-w-6xl mx-auto px-4 sm:px-6 mt-8" data-page-node-id="697E7pk7CE1CNyEJoC8e1F">
+  <div id="matchList" class="space-y-3" data-page-node-id="1wQKsTB9CVTH5gKB6KiDlR"></div>
+
+  <!-- 赛果回顾（过去半个月） -->
+  <div class="mt-12" data-page-node-id="GKRcIYP3Jj80GBzwihooJs">
+    <div class="flex items-center gap-x-3 gap-y-2 mb-4 flex-wrap" data-page-node-id="4bjwMP3hhoHNR1ij8LM345">
+      <h2 class="text-xl font-bold" data-page-node-id="sGjBoCu65T64SM598SpOHk">赛果回顾</h2>
+      <span id="resultHint" class="text-xs font-semibold text-sea-700" data-page-node-id="resultHintSpan"></span>
+      <span class="text-xs text-ink-3 hidden sm:inline" data-page-node-id="resultSub">过去 15 天已结束的比赛 · 按日期倒序</span>
+      <span id="spoilerHint" class="text-xs text-ink-3 hidden" data-page-node-id="eaAeVUcSBZvkDsu06y6tdq">防剧透已开启 · 点击比分查看</span>
+      <div class="flex-1" data-page-node-id="resTabSpacer"></div>
+      <div id="resultTabs" class="flex gap-1.5" data-page-node-id="resTabs">
+        <button data-rsport="all" class="tab-btn rsport-tab px-3 py-1.5 rounded-full text-xs font-semibold bg-deep-900 text-white" data-page-node-id="rtAll">全部</button>
+        <button data-rsport="football" class="tab-btn rsport-tab px-3 py-1.5 rounded-full text-xs font-semibold bg-sea-50 text-sea-700 hover:bg-sea-100" data-page-node-id="rtFb">⚽ 足球</button>
+        <button data-rsport="esports" class="tab-btn rsport-tab px-3 py-1.5 rounded-full text-xs font-semibold bg-sea-50 text-sea-700 hover:bg-sea-100" data-page-node-id="rtEs">🎮 电竞</button>
+      </div>
+    </div>
+    <div id="resultList" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3" data-page-node-id="2WxLQl0FBQzVpaS1RoVIeL"></div>
+  </div>
+</main>
+
+<!-- ============ 纹理带 + 页脚 ============ -->
+<div class="brush-band h-24 mt-16" data-page-node-id="TYDfD1rssMdZcN9kjjPIn7"></div>
+<footer class="bg-deep-900 text-sea-200" data-page-node-id="sFnsoUDl9qvQv9GGod6BqR">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-8 text-sm flex flex-wrap gap-4 justify-between" data-page-node-id="0kv5DZxPoYprnpMTbYWFpi">
+    <div data-page-node-id="paWC8bJhJdcnZOXgtTgHnX">
+      <div class="font-bold text-white mb-1" data-page-node-id="YkPE1V2NuOrvf5PXHZw8WA">海风看球</div>
+      <div class="text-xs text-deep-400" data-page-node-id="a1u049FJRpiVLDFetzgA6f">赛程预告 · 观赛渠道导航 · 赛前提醒</div>
+    </div>
+    <div class="text-xs text-deep-400 self-end" data-page-node-id="CVaBK7oehSnruSZgm2FsfC">赛程/赛果数据来自 football-data.org 与 PandaScore · 「海风油画」设计规范 v1.0</div>
+  </div>
+</footer>
+
+<!-- ============ 赛前情报卡 Modal ============ -->
+<div id="modal" class="fixed inset-0 z-50 hidden items-end sm:items-center justify-center" data-page-node-id="SP4uV33fyHbJVmBqGUxUwt">
+  <div class="modal-bg absolute inset-0 bg-deep-900/50 backdrop-blur-sm" onclick="closeModal()" data-page-node-id="qtoMuGBvfjARHx29SqckM0"></div>
+  <div class="modal-panel relative bg-white w-full sm:max-w-lg sm:rounded-2xl rounded-t-2xl shadow-pop max-h-[85vh] overflow-y-auto" id="modalPanel" data-page-node-id="S3rFBF8nPXRrCUdYOmaWqn"></div>
+</div>
+
+<!-- ============ Toast ============ -->
+<div id="toastBox" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 space-y-2" data-page-node-id="bIHMsVHjBQP2tt4NOFRQjI"></div>
+
+<script>
+/* ================= 数据层（真实接口 + mock 回退） ================= */
+const SPORT_NAME = {football:'足球', esports:'电竞', badminton:'羽毛球'};
+const SPORT_ICON = {football:'⚽', esports:'🎮', badminton:'🏸'};
+/* 电竞子项目图标（真实数据里 game 字段会带具体游戏）
+   ⚠️ CS2 已按需求从数据源排除（见服务端 PS_GAMES），前端再做一道兜底过滤 */
+const GAME_ICON = {lol:'🟦', valorant:'🎯', dota2:'🛡️'};
+const GAME_NAME = {lol:'英雄联盟', valorant:'无畏契约', dota2:'DOTA2'};
+const BLOCKED_GAMES = ['csgo'];              // 不展示的电竞项目
+
+/* 时间跨度：未来 15 天预告（今天 + 15 天 = 16 个日期）+ 过去 15 天赛果 */
+const LOOKAHEAD_DAYS = 15;
+const DAY_LABEL = ['今天','明天','后天'];
+const WD = ['日','一','二','三','四','五','六'];
+
+/* 接口地址（按场景自动判定，也可手动指定 window.__API_BASE__ 覆盖）：
+   1. 手动指定 window.__API_BASE__ 时以它为准（后端在别的域名时用）
+   2. 双击文件打开（file://）→ 指向本地代理 http://localhost:8787（需先跑 server.js）
+   3. http / https 打开（本地 8787 或 Vercel 线上）→ 走【同域相对路径】/api/matches，零配置
+   拉取失败时会自动回退内置 demo 数据，页面不会白屏 */
+const API_BASE = window.__API_BASE__
+  ?? (location.protocol === 'file:' ? 'http://localhost:8787' : '');
+// http(s) 场景一律走真实接口（相对路径即为同域 /api/matches）；失败时由 loadMatches 内部回退 mock
+const USE_MOCK = false;
+
+function mk(day, hh, mm, sport, league, home, away, channels, info, followed=false){
+  const d = new Date(); d.setDate(d.getDate()+day); d.setHours(hh, mm, 0, 0);
+  return {id: `${sport}-${day}-${hh}${mm}-${home}`, day, dt:d, time:`${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}`,
+          sport, league, home, away, channels, info, followed, remind:false};
+}
+
+/* ============ 接口数据归一化 ============ */
+/* 把服务端返回的扁平结构，转成页面渲染需要的结构：
+   utcDate(ISO) → dt(Date 本地) / day(0..2 相对天) / time(HH:mm 本地) */
+function normalize(raw) {
+  const today = new Date(); today.setHours(0,0,0,0);
+  return raw.map(m => {
+    const dt = new Date(m.utcDate);
+    const dayKey = new Date(dt); dayKey.setHours(0,0,0,0);
+    const day = Math.round((dayKey - today) / 86400000);   // 0=今天 1=明天 2=后天
+    return {
+      id: m.id,
+      day,
+      dateKey: `${dayKey.getFullYear()}-${String(dayKey.getMonth()+1).padStart(2,'0')}-${String(dayKey.getDate()).padStart(2,'0')}`,
+      dt,
+      time: `${String(dt.getHours()).padStart(2,'0')}:${String(dt.getMinutes()).padStart(2,'0')}`,
+      sport: m.sport,
+      league: m.league,
+      home: m.home,
+      away: m.away,
+      channels: m.channels || [],
+      bo: m.bo || null,
+      game: m.game || null,                                 // 电竞子项目 lol/csgo/valorant/dota2
+      top: m.top || 0,                                      // 是否知名赛事
+      score: m.score || null,
+      status: m.status || null,
+      info: m.info || null,                                  // 免费数据源无情报，Modal 会优雅降级
+      followed: false, remind: false,
+    };
+  }).filter(m => m.day >= 0 && m.day <= LOOKAHEAD_DAYS         // 今天 ~ 未来 15 天
+              && !BLOCKED_GAMES.includes(m.game));             // CS2 不展示
+}
+
+/* 赛果归一化：半个月的赛果要按日期分组展示，所以这里把「日期键 / 日期标签 / 时间戳」一次算好 */
+function normalizeResults(raw) {
+  const today = new Date(); today.setHours(0,0,0,0);
+  return raw
+    .filter(r => r.utcDate && !BLOCKED_GAMES.includes(r.game))
+    .map(r => {
+      const dt = new Date(r.utcDate);
+      const dk = new Date(dt); dk.setHours(0,0,0,0);
+      const diff = Math.round((dk - today) / 86400000);
+      const dayLabel = diff === 0 ? '今天' : diff === -1 ? '昨天'
+                     : diff === -2 ? '前天' : `${dt.getMonth()+1}月${dt.getDate()}日`;
+      const hhmm = `${String(dt.getHours()).padStart(2,'0')}:${String(dt.getMinutes()).padStart(2,'0')}`;
+      return {
+        id: r.id,
+        sport: r.sport,
+        game: r.game || null,
+        league: r.league || '赛事',
+        home: r.home, away: r.away,
+        score: r.score || '—',
+        dateKey: `${dk.getFullYear()}-${String(dk.getMonth()+1).padStart(2,'0')}-${String(dk.getDate()).padStart(2,'0')}`,
+        dayNum: `${dt.getMonth()+1}月${dt.getDate()}日`,
+        wd: WD[dt.getDay()],
+        diff,
+        time: hhmm,
+        ts: dt.getTime(),
+        when: `${dayLabel} ${hhmm}`,     // 兼容旧字段（Modal / 其他引用）
+      };
+    })
+    .sort((a, b) => b.ts - a.ts);        // 全局按结束时间倒序：最新的赛果排最上
+}
+
+/* ============ 拉取真实数据 ============ */
+let MATCHES = [];          // 由接口填充；拉取失败则回退 mock
+let DATA_SOURCE = 'mock';
+/* 最近一次接口调用的结果 —— 用于把失败原因显示出来（0 = 请求没发出去 / 网络层失败） */
+let LAST_STATUS = 0, LAST_ERR = null;
+/* 接口自报的版本号（payload.build）。用来一眼分辨「线上还是旧版函数」——
+   中文化只在函数层做，函数没 Redeploy 的话页面就一直是英文，而症状和「上游没数据」长得一样 */
+let API_BUILD = '';
+
+async function loadMatches() {
+  if (USE_MOCK) { MATCHES = MOCK_MATCHES; RESULTS = MOCK_RESULTS; DATA_SOURCE = 'mock'; return; }
+  const box = document.getElementById('matchList');
+  box.innerHTML = `<div class="bg-white rounded-xl shadow-card p-10 text-center text-ink-3 text-sm">
+      <span class="inline-block w-4 h-4 border-2 border-sea-300 border-t-sea-600 rounded-full animate-spin align-middle mr-2"></span>正在加载最新赛程…
+    </div>`;
+  LAST_STATUS = 0; LAST_ERR = null;
+  try {
+    const res = await fetch(`${API_BASE}/api/matches`, { cache: 'no-store' });
+    LAST_STATUS = res.status;
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const { matches = [], results = [], build = '' } = await res.json();
+    API_BUILD = build;
+    MATCHES = normalize(matches);
+    if (results.length) RESULTS = normalizeResults(results);   // 半个月赛果一并通过接口带回
+    DATA_SOURCE = 'live';
+    if (!MATCHES.length) throw new Error('接口返回 0 场赛程');
+  } catch (e) {
+    LAST_ERR = e.message;
+    console.warn('[loadMatches] 接口失败，回退 mock：', e.message, '· HTTP', LAST_STATUS);
+    MATCHES = MOCK_MATCHES; RESULTS = MOCK_RESULTS; DATA_SOURCE = 'mock';
+    toast('实时数据获取失败，已切换到演示数据', false);
+  }
+}
+
+/* ============ Mock 回退数据 ============ */
+const MOCK_MATCHES = [
+
+  mk(0,19,0,'esports','LPL 夏季赛 · 季后赛','BLG','TES',
+     [{n:'B站',free:1},{n:'虎牙',free:1}],
+     {form:['BLG 近5场 4胜1负','TES 近5场 3胜2负'], h2h:'近6次交手 BLG 4胜2负', note:'季后赛败者组生死战，中路 knight 与 JackeyLove 的对位值得关注。'}, true),
+  mk(0,19,35,'football','中超 · 第 26 轮','上海海港','山东泰山',
+     [{n:'咪咕视频',free:1},{n:'央视频',free:1}],
+     {form:['海港 近5场 3胜2平','泰山 近5场 2胜2平1负'], h2h:'近6次交手海港 2胜3平1负', note:'榜首之争，武磊出战成疑，赛前 1 小时公布首发。'}, true),
+  mk(0,20,0,'badminton','中国公开赛 · 1/4决赛','陈雨菲','安洗莹',
+     [{n:'央视体育',free:1},{n:'优酷体育',free:0}],
+     {form:['陈雨菲 本站未失一局','安洗莹 赛季胜率 89%'], h2h:'生涯交手 陈雨菲 7胜8负', note:'头号种子对决，预计 3 局大战。'}, true),
+  mk(0,22,0,'football','西甲 · 第 8 轮','巴塞罗那','马德里竞技',
+     [{n:'爱奇艺体育',free:0}],
+     {form:['巴萨 近5场 4胜1平','马竞 近5场 3胜2负'], h2h:'近6次交手巴萨 3胜2平1负', note:'莱万对阵旧主，西蒙尼执教马竞第 700 场。'}),
+  /* —— 明天 —— */
+  mk(1,3,0,'football','欧冠 · 小组赛第 3 轮','皇家马德里','曼城',
+     [{n:'咪咕视频',free:1},{n:'爱奇艺体育',free:0}],
+     {form:['皇马 近5场 4胜1负','曼城 近5场 5胜'], h2h:'近6次欧冠交手 皇马 3胜1平2负', note:'哈兰德伤愈复出进入大名单；贝林厄姆累积黄牌停赛。'}, true),
+  mk(1,3,0,'football','欧冠 · 小组赛第 3 轮','拜仁慕尼黑','巴黎圣日耳曼',
+     [{n:'爱奇艺体育',free:0}],
+     {form:['拜仁 近5场 5胜','巴黎 近5场 3胜2负'], h2h:'近6次交手拜仁 4胜2负', note:'姆巴佩战旧主，安联球场满座。'}),
+  mk(1,16,0,'esports','LCK 夏季赛 · 决赛','GEN','T1',
+     [{n:'虎牙',free:1}],
+     {form:['GEN 常规赛 18-0','T1 季后赛连胜 3 轮'], h2h:'近6次交手 GEN 4胜2负', note:'Faker 冲击个人第 11 座联赛冠军。'}, true),
+  mk(1,19,0,'esports','无畏契约 · 大师赛','EDG','FPX',
+     [{n:'B站',free:1},{n:'斗鱼',free:1}],
+     {form:['EDG 近5场 4胜1负','FPX 近5场 3胜2负'], h2h:'本年度交手 EDG 3胜1负', note:'CN 赛区内战，胜者晋级四强。'}),
+  mk(1,19,0,'badminton','中国公开赛 · 半决赛','石宇奇','昆拉武特',
+     [{n:'央视体育',free:1}],
+     {form:['石宇奇 近10场 9胜','昆拉武特 近10场 7胜'], h2h:'生涯交手 石宇奇 5胜2负', note:'石宇奇主场冲击赛季第 4 冠。'}),
+  /* —— 后天 —— */
+  mk(2,2,45,'football','英超 · 第 7 轮','阿森纳','利物浦',
+     [{n:'咪咕视频',free:1},{n:'爱奇艺体育',free:0}],
+     {form:['阿森纳 近5场 4胜1平','利物浦 近5场 4胜1负'], h2h:'近6次交手 2胜2平2负', note:'榜首大战，萨卡与萨拉赫的边路对决。'}),
+  mk(2,14,0,'badminton','中国公开赛 · 决赛','待定','待定',
+     [{n:'央视体育',free:1}],
+     {form:[], h2h:'—', note:'决赛日：五个单项依次进行，中午 12 点开始。'}),
+  mk(2,17,0,'esports','DOTA2 国际邀请赛','LGD','Spirit',
+     [{n:'B站',free:1}],
+     {form:['LGD 小组赛 12-2','Spirit 小组赛 10-4'], h2h:'近6次交手 LGD 2胜4负', note:'TI 淘汰赛胜者组首轮。'}),
+  mk(2,19,35,'football','中超 · 第 27 轮','北京国安','上海申花',
+     [{n:'央视频',free:1},{n:'咪咕视频',free:1}],
+     {form:['国安 近5场 2胜3负','申花 近5场 4胜1负'], h2h:'近6次交手申花 3胜2平1负', note:'京沪德比，工体门票已售罄。'}),
+];
+
+/* 赛果：优先用接口 /api/matches 返回的 results 字段；接口拿不到才回退这几条示例 */
+function mockAgo(daysAgo, hh, mm){
+  const d = new Date(); d.setDate(d.getDate()-daysAgo); d.setHours(hh,mm,0,0); return d.toISOString();
+}
+const MOCK_RESULTS = [
+  {utcDate:mockAgo(1,21,30), sport:'football', league:'英超 · 第 6 轮', home:'曼联', away:'切尔西', score:'2 : 1'},
+  {utcDate:mockAgo(1,19,0),  sport:'esports',  game:'lol', league:'LPL · 季后赛', home:'JDG', away:'WBG', score:'3 : 1'},
+  {utcDate:mockAgo(2,20,0),  sport:'badminton',league:'中国公开赛', home:'郑思维/黄雅琼', away:'渡边勇大/东野有纱', score:'2 : 0'},
+];
+let RESULTS = normalizeResults(MOCK_RESULTS);
+
+/* ================= 状态 ================= */
+let curDay = 0, curSport = 'all', spoiler = false;
+let resSport = 'all';                  // 赛果区项目筛选（全部/足球/电竞）
+const expandedDays = new Set();        // 已「展开全部」的赛果日期（dateKey）
+
+/* 给每场比赛打上「相对日」标签，供 Modal 显示（超出今天/明天/后天时退化为具体日期） */
+function labelMatches(){
+  MATCHES.forEach(m => {
+    m.dateLabel = DAY_LABEL[m.day] ?? `${m.dt.getMonth()+1}月${m.dt.getDate()}日 周${WD[m.dt.getDay()]}`;
+  });
+}
+
+/* ================= 日期条（今天 + 未来 15 天，共 16 个日期） ================= */
+function renderDateStrip(){
+  const box = document.getElementById('dateStrip');
+  box.innerHTML = '';
+  // 先统计每天有多少场，直接标在日期上 —— 15 天跨度里用户要一眼看出哪天值得看
+  const cntByDay = {};
+  MATCHES.forEach(m => { cntByDay[m.day] = (cntByDay[m.day] || 0) + 1; });
+
+  for(let i=0;i<=LOOKAHEAD_DAYS;i++){
+    const d = new Date(); d.setDate(d.getDate()+i);
+    const cnt = cntByDay[i] || 0;
+    const active = i===curDay;
+    const label = DAY_LABEL[i] ?? `周${WD[d.getDay()]}`;
+    const b = document.createElement('button');
+    b.className = `tab-btn flex-shrink-0 flex flex-col items-center px-3.5 py-2 rounded-xl min-w-[62px] ${active?'bg-sea-500 text-white shadow-card':'bg-sea-50 text-ink-2 hover:bg-sea-100'}`;
+    b.innerHTML = `<span class="text-sm font-bold whitespace-nowrap">${label}</span>
+                   <span class="text-[11px] ${active?'text-sea-50':'text-ink-3'}">${d.getMonth()+1}/${d.getDate()}</span>
+                   <span class="text-[10px] leading-4 ${cnt?(active?'text-white':'text-sea-600 font-semibold'):(active?'text-sea-100/70':'text-ink-3 opacity-40')}">${cnt?`${cnt} 场`:'—'}</span>`;
+    b.onclick = ()=>{ curDay=i; renderDateStrip(); renderMatches(); };
+    box.appendChild(b);
+  }
+
+  // 选中日期滚出可视区时把它拉回来（只滚动容器本身，不影响页面滚动位置）
+  const act = box.children[curDay];
+  if(act && box.scrollWidth > box.clientWidth){
+    box.scrollLeft = Math.max(0, act.offsetLeft - 8);
+  }
+  // 离开今天时给出「回到今天」快捷入口（16 个日期滚到后面就找不到今天了）
+  const bt = document.getElementById('backToday');
+  if(bt) bt.classList.toggle('hidden', curDay === 0);
+}
+
+/* ================= 渠道徽章 ================= */
+function chBadges(chs){
+  return chs.map(c=>`<span class="text-[11px] font-semibold px-2.5 py-1 rounded-full ${c.free?'bg-[#E6F7EF] text-[#1E8A66]':'bg-sea-100 text-sea-700'}">${c.n}${c.free?'·免费':''}</span>`).join('');
+}
+
+/* ================= 赛程卡片 ================= */
+function timeTag(m){
+  const now = new Date();
+  if(m.day===0 && m.dt < now) return `<span class="text-[10px] font-bold text-ok">进行中</span>`;
+  if(m.day===1 && m.dt.getHours()<8) return `<span class="text-[10px] font-bold text-warn">明晨</span>`;
+  if(m.day>1 && m.dt.getHours()<8) return `<span class="text-[10px] font-bold text-warn">凌晨</span>`;
+  return '';
+}
+
+function renderMatches(){
+  const list = document.getElementById('matchList');
+  const ms = MATCHES.filter(m=>m.day===curDay && (curSport==='all'||m.sport===curSport))
+                    .sort((a,b)=>a.dt-b.dt);
+  if(!ms.length){
+    list.innerHTML = `<div class="bg-white rounded-xl shadow-card p-10 text-center text-ink-3 text-sm">这一天没有该项目的比赛，看看别的项目吧</div>`;
+    return;
+  }
+  /* 按联赛分组 */
+  const groups = {};
+  ms.forEach(m=>{(groups[m.league]=groups[m.league]||[]).push(m);});
+  list.innerHTML = Object.entries(groups).map(([league, items])=>`
+    <div class="mb-2">
+      <div class="flex items-center gap-2 px-1 py-2">
+        <span class="text-[11px] font-bold text-ink-3 tracking-wider">${league}</span>
+        <div class="flex-1 h-px bg-sea-100"></div>
+      </div>
+      ${items.map(m=>`
+      <div class="card bg-white rounded-xl shadow-card px-4 sm:px-5 py-4 mb-3 cursor-pointer flex items-center gap-3 sm:gap-4" onclick="openModal('${m.id}')">
+        <div class="w-14 text-center flex-shrink-0">
+          <div class="font-num text-xl font-bold text-ink-1">${m.time}</div>
+          ${timeTag(m)}
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2">
+            <span class="font-semibold text-[15px] truncate">${m.home} <span class="text-ink-3 font-normal">vs</span> ${m.away}</span>
+            ${m.followed?`<svg width="12" height="12" viewBox="0 0 24 24" fill="#F5C542" stroke="#E0B02A" stroke-width="1.5" class="flex-shrink-0"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>`:''}
+          </div>
+          <div class="text-xs text-ink-3 mt-0.5">${GAME_ICON[m.game] || SPORT_ICON[m.sport]} ${m.league}${m.bo?` <span class="text-sea-600 font-semibold">· ${m.bo}</span>`:''}</div>
+          <div class="hidden sm:flex gap-1.5 mt-2 flex-wrap">${chBadges(m.channels)}</div>
+        </div>
+        <button onclick="event.stopPropagation();toggleRemind('${m.id}')" title="开赛前 30 分钟提醒"
+          class="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 transition-colors ${m.remind?'bg-daisy-soft':'bg-sea-50 hover:bg-sea-100'}">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${m.remind?'#E0B02A':'#3E9CC6'}" stroke-width="2.2" stroke-linecap="round">
+            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/>
+          </svg>
+        </button>
+      </div>`).join('')}
+    </div>`).join('');
+}
+
+/* ================= 赛果回顾（防剧透） ================= */
+/* 半个月的赛果有两三百场，平铺会把页面撑爆，所以：
+   按日期倒序分组 → 每组默认只露 6 场 → 组内可展开 → 顶部按项目筛选 */
+const RESULT_PREVIEW = 6;
+
+function resultCard(r){
+  const icon = r.game ? (GAME_ICON[r.game] || SPORT_ICON[r.sport]) : SPORT_ICON[r.sport];
+  return `
+    <div class="bg-white rounded-xl shadow-card px-5 py-4">
+      <div class="text-[11px] font-bold text-ink-3 tracking-wider mb-2 truncate">${icon} ${r.league}</div>
+      <div class="flex items-center justify-between gap-2">
+        <div class="text-sm font-semibold flex-1 min-w-0">${r.home}<br><span class="text-ink-2">${r.away}</span></div>
+        <div class="score font-num text-xl font-bold text-sea-700 ${spoiler?'spoiler-blur':''}" data-score="${r.score}">${spoiler?'0 : 0':r.score}</div>
+      </div>
+      <div class="text-[11px] text-ink-3 mt-2 font-num">${r.time}</div>
+    </div>`;
+}
+
+function renderResults(){
+  const box = document.getElementById('resultList');
+  const hint = document.getElementById('resultHint');
+  const list = RESULTS.filter(r => resSport==='all' || r.sport===resSport);
+
+  if(!list.length){
+    box.innerHTML = `<div class="bg-white rounded-xl shadow-card px-5 py-10 text-center text-ink-3 text-sm col-span-full">最近半个月没有已结束的比赛</div>`;
+    if(hint) hint.textContent = '';
+    document.getElementById('spoilerHint').classList.toggle('hidden', !spoiler);
+    return;
+  }
+
+  // 按自然日分组：RESULTS 本身已按时间倒序，Map 的插入顺序即「日期倒序」
+  const groups = new Map();
+  for(const r of list){
+    if(!groups.has(r.dateKey)) groups.set(r.dateKey, []);
+    groups.get(r.dateKey).push(r);
+  }
+
+  box.innerHTML = [...groups.entries()].map(([key, items])=>{
+    const head = items[0];
+    const opened = expandedDays.has(key);
+    const shown = opened ? items : items.slice(0, RESULT_PREVIEW);
+    const rest = items.length - shown.length;
+    const dayTag = head.diff===0 ? '<span class="text-[10px] font-bold text-ok">今天</span>'
+                 : head.diff===-1 ? '<span class="text-[10px] font-bold text-sea-600">昨天</span>' : '';
+    return `
+    <div class="col-span-full">
+      <div class="flex items-center gap-2.5 pt-2 pb-2">
+        <span class="text-xs font-bold text-ink-1 font-num">${head.dayNum}</span>
+        <span class="text-[11px] text-ink-3">周${head.wd}</span>
+        ${dayTag}
+        <div class="flex-1 h-px bg-sea-100"></div>
+        <span class="text-[11px] text-ink-3 font-num">${items.length} 场</span>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        ${shown.map(resultCard).join('')}
+        ${rest>0 ? `<button onclick="expandResults('${key}')" class="rounded-xl border border-dashed border-sea-200 text-sea-700 text-sm font-semibold py-4 px-4 hover:bg-sea-50 transition-colors">展开当日全部 ${items.length} 场<svg class="inline ml-1" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" data-page-node-id="expChev"><path d="M6 9l6 6 6-6"/></svg></button>` : ''}
+        ${opened && items.length>RESULT_PREVIEW ? `<button onclick="collapseResults('${key}')" class="rounded-xl text-ink-3 text-xs font-semibold py-4 hover:text-ink-1 transition-colors">收起</button>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+
+  if(hint) hint.textContent = `${groups.size} 天 · ${list.length} 场`;
+
+  // 防剧透：比分区默认打码，点一下单独揭示（比分直接存在 data 属性里，不依赖数组下标）
+  if(spoiler){
+    box.querySelectorAll('.score').forEach(el=>{
+      el.onclick = ()=>{ el.textContent = el.dataset.score; el.classList.remove('spoiler-blur'); };
+    });
+  }
+  document.getElementById('spoilerHint').classList.toggle('hidden', !spoiler);
+}
+
+/* 赛果按天折叠：默认每组只露 6 场，避免 15 天 × N 场把页面拉成无底洞 */
+function expandResults(key){ expandedDays.add(key); renderResults(); }
+function collapseResults(key){ expandedDays.delete(key); renderResults(); }
+
+/* ================= 提醒 ================= */
+function toggleRemind(id){
+  const m = MATCHES.find(x=>x.id===id);
+  m.remind = !m.remind;
+  toast(m.remind ? `已设置提醒 · ${m.home} vs ${m.away}，开赛前 30 分钟通知你（附直播链接）`
+                 : `已取消提醒 · ${m.home} vs ${m.away}`, m.remind);
+  renderMatches(); updateFollowCount();
+}
+function updateFollowCount(){
+  const n = MATCHES.filter(m=>m.remind||m.followed).length;
+  document.getElementById('followCount').textContent = n;
+}
+
+/* ================= 赛前情报卡 ================= */
+function openModal(id){
+  const m = MATCHES.find(x=>x.id===id);
+  const info = m.info;
+  // 免费数据源没有情报数据，优雅降级而不是报错
+  const infoBlock = info ? `
+      <div class="mt-5 bg-sea-50 rounded-xl p-4">
+        <div class="text-xs font-bold text-sea-700 mb-2">赛前情报卡</div>
+        ${info.form?.length?`<div class="text-sm text-ink-2 space-y-1">${info.form.map(f=>`<div>· ${f}</div>`).join('')}</div>`:''}
+        <div class="text-sm text-ink-2 mt-1">· 交锋记录：${info.h2h||'—'}</div>
+        ${info.note?`<div class="text-sm text-ink-1 mt-2 leading-relaxed">${info.note}</div>`:''}
+      </div>`
+    : `<div class="mt-5 bg-sea-50 rounded-xl p-4 text-sm text-ink-3">
+         · 该场次暂无赛前情报数据（阵容 / 伤停需接入付费数据源）
+       </div>`;
+  document.getElementById('modalPanel').innerHTML = `
+    <div class="p-6">
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <div class="text-[11px] font-bold text-ink-3 tracking-wider">${GAME_ICON[m.game] || SPORT_ICON[m.sport]} ${m.league}</div>
+          <h3 class="text-xl font-bold mt-1">${m.home} <span class="text-ink-3 font-normal">vs</span> ${m.away}</h3>
+          <div class="text-sm text-sea-700 font-num font-bold mt-1">${m.dateLabel||DAY_LABEL[m.day]} ${m.time} 开赛${m.bo?` · ${m.bo}`:''}</div>
+        </div>
+        <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-sea-50 hover:bg-sea-100 flex items-center justify-center text-ink-2 flex-shrink-0">✕</button>
+      </div>
+      <div class="flex gap-1.5 mt-4 flex-wrap">${chBadges(m.channels)||'<span class="text-xs text-ink-3">暂无渠道信息</span>'}</div>
+      ${infoBlock}
+
+      <div class="flex gap-3 mt-5">
+        <button onclick="toggleRemind('${m.id}');closeModal()"
+          class="flex-1 ${m.remind?'bg-sea-100 text-sea-700':'bg-daisy hover:bg-daisy-hover text-[#5C4400]'} font-semibold text-sm py-3 rounded-full transition-colors">
+          ${m.remind?'已设置提醒 · 点击取消':'开赛前 30 分钟提醒我'}
+        </button>
+        <a href="#" onclick="event.preventDefault();toast('实际产品将跳转到直播平台（需接入各家深链）',true)"
+          class="flex-1 bg-sea-500 hover:bg-sea-600 text-white font-semibold text-sm py-3 rounded-full text-center transition-colors">去观赛</a>
+      </div>
+    </div>`;
+  const md = document.getElementById('modal');
+  md.classList.remove('hidden'); md.classList.add('flex');
+  document.body.style.overflow='hidden';
+}
+function closeModal(){
+  const md = document.getElementById('modal');
+  md.classList.add('hidden'); md.classList.remove('flex');
+  document.body.style.overflow='';
+}
+
+/* ================= Toast ================= */
+function toast(msg, good=true){
+  const t = document.createElement('div');
+  t.className = `toast flex items-center gap-2 bg-deep-900 text-white text-sm px-5 py-3 rounded-full shadow-pop`;
+  t.innerHTML = `<span class="w-2 h-2 rounded-full ${good?'bg-daisy':'bg-sea-300'}"></span>${msg}`;
+  document.getElementById('toastBox').appendChild(t);
+  setTimeout(()=>{t.style.transition='opacity .3s';t.style.opacity='0';setTimeout(()=>t.remove(),320);},2600);
+}
+
+/* ================= 最近一场倒计时 ================= */
+function tick(){
+  const now = new Date();
+  const next = MATCHES.filter(m=>m.dt>now).sort((a,b)=>a.dt-b.dt)[0];
+  const tEl = document.getElementById('cdTime'), nEl = document.getElementById('cdTitle');
+  if(!next){nEl.textContent='近期赛事已播完';tEl.textContent='--:--:--';return;}
+  nEl.textContent = `最近一场 · ${next.home} vs ${next.away}`;
+  let s = Math.max(0, Math.floor((next.dt-now)/1000));
+  const h = String(Math.floor(s/3600)).padStart(2,'0'), m2 = String(Math.floor(s%3600/60)).padStart(2,'0'), ss = String(s%60).padStart(2,'0');
+  tEl.textContent = `${h}:${m2}:${ss}`;
+}
+
+/* ================= 项目筛选 ================= */
+document.querySelectorAll('.sport-tab').forEach(b=>{
+  b.onclick = ()=>{
+    curSport = b.dataset.sport;
+    document.querySelectorAll('.sport-tab').forEach(x=>{
+      const on = x===b;
+      x.className = `tab-btn sport-tab whitespace-nowrap px-4 py-2 rounded-full text-sm font-semibold ${on?'bg-deep-900 text-white':'bg-sea-50 text-sea-700 hover:bg-sea-100'}`;
+    });
+    renderMatches();
+  };
+});
+
+/* ================= 赛果项目筛选 ================= */
+document.querySelectorAll('.rsport-tab').forEach(b=>{
+  b.onclick = ()=>{
+    resSport = b.dataset.rsport;
+    document.querySelectorAll('.rsport-tab').forEach(x=>{
+      const on = x===b;
+      x.className = `tab-btn rsport-tab px-3 py-1.5 rounded-full text-xs font-semibold ${on?'bg-deep-900 text-white':'bg-sea-50 text-sea-700 hover:bg-sea-100'}`;
+    });
+    expandedDays.clear();                 // 换了筛选条件就回到默认折叠态
+    renderResults();
+  };
+});
+
+/* ================= 回到今天 ================= */
+document.getElementById('backToday').onclick = ()=>{
+  curDay = 0;
+  renderDateStrip(); renderMatches();
+  document.getElementById('dateStrip').scrollIntoView({behavior:'smooth', block:'nearest'});
+};
+
+/* ================= 防剧透开关 ================= */
+document.getElementById('spoilerSwitch').onclick = ()=>{
+  spoiler = !spoiler;
+  const sw = document.getElementById('spoilerSwitch'), knob = document.getElementById('spoilerKnob');
+  sw.className = `w-10 h-5 rounded-full relative transition-colors cursor-pointer ${spoiler?'bg-daisy':'bg-sea-200'}`;
+  knob.style.left = spoiler ? '22px' : '2px';
+  toast(spoiler?'防剧透已开启：比分默认隐藏，点击单独查看':'防剧透已关闭', spoiler);
+  renderResults();
+};
+document.getElementById('followBtn').onclick = ()=>{
+  const fs = MATCHES.filter(m=>m.remind||m.followed);
+  if(!fs.length) return toast('还没有关注任何比赛或设置提醒', false);
+  toast(`已关注 ${fs.length} 场：` + fs.slice(0,3).map(m=>`${m.home} vs ${m.away}`).join('、') + (fs.length>3?' 等':''), true);
+};
+
+/* ================= 接口诊断横幅 =================
+   接口失败时，把「HTTP 状态码 + 最可能的根因 + 怎么修」直接写在页面上。
+   原因：404（没传 api 函数）、403（开了部署保护）、500（函数报错）、
+   0（网络不可达，国内访问 *.vercel.app 常被 DNS 污染）、
+   200 但 0 场（环境变量没配或没 Redeploy）—— 这几类在前端本来长得一模一样。 */
+function renderApiDiag(){
+  const el = document.getElementById('apiDiag');
+  if (!el) return;
+  if (DATA_SOURCE === 'live'){
+    // 接口通了，但没自报版本号 → 线上跑的还是旧版函数。
+    // 这类「静默偏差」最坑：数据是全的、页面是活的，只有联赛名/队名还是英文。
+    if (!API_BUILD){
+      el.classList.remove('hidden');
+      el.innerHTML = `<b>接口在跑，但没自报版本号</b> —— 线上多半是旧版函数（本次中文化只改了函数层）。
+        现象会是足球联赛名/队名仍是英文。打开 <a class="underline font-semibold" href="${API_BASE}/api/selfcheck" target="_blank" rel="noopener">/api/selfcheck</a>
+        看 <code>build</code> 与 <code>zh.ok</code>：若没有 build 字段，说明这版没传上去，需要把整个「观赛预告-deploy」文件夹重传并 Redeploy。`;
+      return;
+    }
+    el.classList.add('hidden'); el.innerHTML=''; return;
+  }
+
+  const s = LAST_STATUS;
+  let kind, why, fix;
+  if (s === 0){
+    kind = '请求没能发出去（网络层失败）';
+    why = LAST_ERR || '未知网络错误';
+    fix = '先确认这个域名你自己能打开。如果浏览器正常但这里报错，多半是 *.vercel.app 被 DNS 污染——绑定一个自有域名（Vercel → Settings → Domains）即可绕过。';
+  } else if (s === 404){
+    kind = '接口不存在（HTTP 404）';
+    why = 'Vercel 项目里没有 api/matches.js —— 只传了 index.html，页面就只是个静态网页。';
+    fix = '确认仓库/上传目录里有 api/matches.js（用「观赛预告-deploy」整个文件夹传），再 Redeploy。';
+  } else if (s === 401 || s === 403){
+    kind = `访问被拒（HTTP ${s}）`;
+    why = 'Vercel 打开了 Deployment Protection（Vercel Authentication），匿名请求会被挡在登录页。';
+    fix = 'Vercel → Settings → Deployment Protection → 关闭 Vercel Authentication，然后重新访问。';
+  } else if (s >= 500){
+    kind = `函数执行失败（HTTP ${s}）`;
+    why = '函数部署上去了，但运行时报错或超时。';
+    fix = '先打开下面的 /api/selfcheck 确认函数层；能打开就说明是上游或超时问题，再看 /api/matches 的 sources。';
+  } else if (s === 200){
+    kind = '接口通了，但返回 0 场赛程';
+    why = '多半是环境变量没配，或者配了但没重新部署。';
+    fix = '打开下面的 /api/matches，看 sources.missing_keys 里列了哪个变量；补上后必须 Redeploy 才生效。';
+  } else {
+    kind = `接口异常（HTTP ${s}）`;
+    why = LAST_ERR || '';
+    fix = '打开 /api/matches 和 /api/selfcheck 对照排查。';
+  }
+
+  el.classList.remove('hidden');
+  el.innerHTML =
+    `<div class="font-bold text-deep-900 mb-1">⚠️ 实时数据未接入 · ${kind}</div>` +
+    `<div class="text-ink-2">${why}</div>` +
+    `<div class="mt-1 text-ink-3">怎么修：${fix}</div>` +
+    `<div class="mt-2 flex flex-wrap gap-3 text-[11px]">` +
+      `<a class="underline font-semibold" href="${API_BASE}/api/matches" target="_blank" rel="noopener">打开 /api/matches</a>` +
+      `<a class="underline font-semibold" href="${API_BASE}/api/selfcheck?probe=1" target="_blank" rel="noopener">打开 /api/selfcheck（函数自检）</a>` +
+      `<a class="underline font-semibold" href="javascript:location.reload()">重新加载</a>` +
+    `</div>`;
+}
+
+/* ================= 初始化 ================= */
+(async function init(){
+  renderDateStrip();
+  renderResults();                       // 先用示例赛果占位，避免首屏空白
+  document.getElementById('matchList').innerHTML = '';
+  await loadMatches();                   // 先取数（赛程 + 半个月赛果一并带回），再渲染
+  labelMatches();
+  renderDateStrip();                     // 拿到真实数据后刷新日期条上的「每天几场」
+  const badge = document.getElementById('srcBadge');
+  if (badge) {
+    badge.textContent = DATA_SOURCE === 'live'
+      ? `实时数据 · 未来 15 天 ${MATCHES.length} 场 · 赛果 ${RESULTS.length} 场 · ${new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})} 更新 · ${API_BUILD ? `接口 ${API_BUILD}` : '接口未报版本·疑旧版'}`
+      : `演示数据 · 接口 ${LAST_STATUS || '未响应'}${LAST_ERR ? `（${LAST_ERR}）` : ''} · ${MATCHES.length} 场示例`;
+    badge.className = `text-[11px] font-semibold px-2.5 py-1 rounded-full backdrop-blur ${DATA_SOURCE==='live'?'bg-white/70 text-deep-800':'bg-daisy-soft text-[#7A5B00]'}`;
+  }
+  renderApiDiag();                       // 接口失败时把确切原因显示出来
+  renderResults();                       // 接口拿到赛果就重绘（拿不到则保持示例）
+  renderMatches(); updateFollowCount(); tick();
+  setInterval(tick, 1000);
+  // 页面可见时自动刷新赛程（切回标签页不会看到过期数据）
+  document.addEventListener('visibilitychange', async ()=>{
+    if(!document.hidden && !USE_MOCK){
+      await loadMatches(); labelMatches(); renderDateStrip(); renderMatches(); renderResults(); renderApiDiag(); updateFollowCount();
+    }
+  });
+})();
+</script>
+</body>
+</html>

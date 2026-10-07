@@ -1,0 +1,12 @@
+{
+  "name": "matches-backend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=23.4"
+  },
+  "scripts": {
+    "start": "node server.js"
+  }
+}

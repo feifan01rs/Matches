@@ -3,6 +3,18 @@
   "_rule": "key 是赛事名关键词。长度<=4 的短 key（联赛 code）走精确匹配；长 key 允许「包含」匹配。free:1=免费(绿),0=付费(蓝)。",
   "_notice": "版权归属会变，建议每赛季初检查一次。",
 
+  "_platforms": {
+    "咪咕视频": "https://www.miguvideo.com/",
+    "央视频": "https://www.yangshipin.cn/",
+    "央视体育": "https://sports.cctv.com/",
+    "爱奇艺体育": "https://sports.iqiyi.com/",
+    "优酷体育": "https://sports.youku.com/",
+    "B站": "https://live.bilibili.com/",
+    "虎牙": "https://www.huya.com/",
+    "斗鱼": "https://www.douyu.com/",
+    "BWF TV（YouTube）": "https://www.youtube.com/@bwftv"
+  },
+
   "Premier League": [
     { "n": "咪咕视频", "free": 1 },
     { "n": "爱奇艺体育", "free": 0 }
@@ -177,9 +189,11 @@
 
   "_other": "其他项目",
   "Badminton": [
+    { "n": "BWF TV（YouTube）", "free": 1 },
     { "n": "央视体育", "free": 1 }
   ],
   "羽毛球": [
+    { "n": "BWF TV（YouTube）", "free": 1 },
     { "n": "央视体育", "free": 1 },
     { "n": "优酷体育", "free": 0 }
   ]

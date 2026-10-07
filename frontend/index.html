@@ -70,7 +70,7 @@
         <h1 class="text-3xl sm:text-4xl font-bold text-deep-900" data-page-node-id="KwHFi4EWfjyffz5NWbC1bM">近半个月，有什么比赛？</h1>
         <p class="mt-3 text-sm sm:text-base text-deep-800" data-page-node-id="SifTduLU3rFIjteqy1f00b">过去 15 天赛果 → 未来 15 天预告 · 所有时间已按你的时区（UTC+8）显示</p>
         <div class="mt-3"><span id="srcBadge" class="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-white/70 text-deep-800 backdrop-blur">数据加载中…</span></div>
-        <!-- 接口诊断横幅：接口失败时显示确切原因，避免「显示演示数据」成为一个无法定位的黑盒 -->
+      <!-- 接口诊断横幅：连不上后端、或后端数据库里还没数据时，显示确切原因 -->
         <div id="apiDiag" class="hidden mt-3 max-w-2xl text-left text-[12px] leading-relaxed rounded-2xl bg-white shadow-card px-4 py-3 text-deep-800 border-l-4 border-daisy"></div>
         <div id="countdownBox" class="mt-5 inline-flex items-center gap-3 bg-white/70 backdrop-blur rounded-2xl px-5 py-3 shadow-card" data-page-node-id="OJHUzxnmTcFgA2NrFyR0aD">
           <span class="w-2 h-2 rounded-full bg-ok live-dot" data-page-node-id="WNt67UUBFHA9CXHf1jRdl0"></span>
@@ -118,6 +118,7 @@
         <button data-rsport="all" class="tab-btn rsport-tab px-3 py-1.5 rounded-full text-xs font-semibold bg-deep-900 text-white" data-page-node-id="rtAll">全部</button>
         <button data-rsport="football" class="tab-btn rsport-tab px-3 py-1.5 rounded-full text-xs font-semibold bg-sea-50 text-sea-700 hover:bg-sea-100" data-page-node-id="rtFb">⚽ 足球</button>
         <button data-rsport="esports" class="tab-btn rsport-tab px-3 py-1.5 rounded-full text-xs font-semibold bg-sea-50 text-sea-700 hover:bg-sea-100" data-page-node-id="rtEs">🎮 电竞</button>
+        <button data-rsport="badminton" class="tab-btn rsport-tab px-3 py-1.5 rounded-full text-xs font-semibold bg-sea-50 text-sea-700 hover:bg-sea-100" data-page-node-id="rtBd">🏸 羽毛球</button>
       </div>
     </div>
     <div id="resultList" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3" data-page-node-id="2WxLQl0FBQzVpaS1RoVIeL"></div>
@@ -146,7 +147,7 @@
 <div id="toastBox" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 space-y-2" data-page-node-id="bIHMsVHjBQP2tt4NOFRQjI"></div>
 
 <script>
-/* ================= 数据层（真实接口 + mock 回退） ================= */
+/* ================= 数据层（全部来自后端，后端再来自数据库） ================= */
 const SPORT_NAME = {football:'足球', esports:'电竞', badminton:'羽毛球'};
 const SPORT_ICON = {football:'⚽', esports:'🎮', badminton:'🏸'};
 /* 电竞子项目图标（真实数据里 game 字段会带具体游戏）
@@ -159,22 +160,16 @@ const BLOCKED_GAMES = ['csgo'];              // 不展示的电竞项目
 const LOOKAHEAD_DAYS = 15;
 const DAY_LABEL = ['今天','明天','后天'];
 const WD = ['日','一','二','三','四','五','六'];
+/* 羽毛球一天动辄上百场，页面上每天只显示前 N 场（抓取照旧，只是少显示） */
+const BADMINTON_PER_DAY = 10;
 
 /* 接口地址（按场景自动判定，也可手动指定 window.__API_BASE__ 覆盖）：
    1. 手动指定 window.__API_BASE__ 时以它为准（后端在别的域名时用）
-   2. 双击文件打开（file://）→ 指向本地代理 http://localhost:8787（需先跑 server.js）
-   3. http / https 打开（本地 8787 或 Vercel 线上）→ 走【同域相对路径】/api/matches，零配置
-   拉取失败时会自动回退内置 demo 数据，页面不会白屏 */
+   2. 双击文件打开（file://）→ 指向本机后端 http://localhost:8787（需先跑 server.js）
+   3. http / https 打开（就是本机后端 8787）→ 走【同域相对路径】/api/matches，零配置
+   数据一律来自后端（后端再来自数据库）；读不到就如实显示，不再用假数据顶上 */
 const API_BASE = window.__API_BASE__
   ?? (location.protocol === 'file:' ? 'http://localhost:8787' : '');
-// http(s) 场景一律走真实接口（相对路径即为同域 /api/matches）；失败时由 loadMatches 内部回退 mock
-const USE_MOCK = false;
-
-function mk(day, hh, mm, sport, league, home, away, channels, info, followed=false){
-  const d = new Date(); d.setDate(d.getDate()+day); d.setHours(hh, mm, 0, 0);
-  return {id: `${sport}-${day}-${hh}${mm}-${home}`, day, dt:d, time:`${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}`,
-          sport, league, home, away, channels, info, followed, remind:false};
-}
 
 /* ============ 接口数据归一化 ============ */
 /* 把服务端返回的扁平结构，转成页面渲染需要的结构：
@@ -190,11 +185,15 @@ function normalize(raw) {
       day,
       dateKey: `${dayKey.getFullYear()}-${String(dayKey.getMonth()+1).padStart(2,'0')}-${String(dayKey.getDate()).padStart(2,'0')}`,
       dt,
-      time: `${String(dt.getHours()).padStart(2,'0')}:${String(dt.getMinutes()).padStart(2,'0')}`,
+      // 羽毛球的时间上游只给「场馆当地时刻」，后端会传 timeText='待定'；
+      // 有就用它，避免把不带时区的时间当北京时间显示成假时刻
+      time: m.timeText || `${String(dt.getHours()).padStart(2,'0')}:${String(dt.getMinutes()).padStart(2,'0')}`,
       sport: m.sport,
       league: m.league,
       home: m.home,
-      away: m.away,
+      away: m.away || null,                                 // 羽毛球「抽签未出」的赛事级卡片没有对手
+      pending: !!m.pending,                                 // 同上：渲染成单行赛事名，不显示 "vs"
+      stage: m.stage || null,                               // 羽毛球用来放地点 / 轮次
       channels: m.channels || [],
       bo: m.bo || null,
       game: m.game || null,                                 // 电竞子项目 lol/csgo/valorant/dota2
@@ -231,7 +230,7 @@ function normalizeResults(raw) {
         dayNum: `${dt.getMonth()+1}月${dt.getDate()}日`,
         wd: WD[dt.getDay()],
         diff,
-        time: hhmm,
+        time: r.timeText || hhmm,   // 羽毛球赛果上游只给到「天」，后端会传 timeText='—'
         ts: dt.getTime(),
         when: `${dayLabel} ${hhmm}`,     // 兼容旧字段（Modal / 其他引用）
       };
@@ -239,17 +238,14 @@ function normalizeResults(raw) {
     .sort((a, b) => b.ts - a.ts);        // 全局按结束时间倒序：最新的赛果排最上
 }
 
-/* ============ 拉取真实数据 ============ */
-let MATCHES = [];          // 由接口填充；拉取失败则回退 mock
-let DATA_SOURCE = 'mock';
-/* 最近一次接口调用的结果 —— 用于把失败原因显示出来（0 = 请求没发出去 / 网络层失败） */
+/* ============ 从后端读数据（后端再从数据库读） ============ */
+let MATCHES = [];
+/* 最近一次请求的结果 —— 用于把失败原因显示出来（0 = 请求没发出去 / 网络层失败） */
 let LAST_STATUS = 0, LAST_ERR = null;
-/* 接口自报的版本号（payload.build）。用来一眼分辨「线上还是旧版函数」——
-   中文化只在函数层做，函数没 Redeploy 的话页面就一直是英文，而症状和「上游没数据」长得一样 */
+/* 后端自报的版本号（payload.build），显示在数据来源徽章上，方便确认跑的是哪一版 */
 let API_BUILD = '';
 
 async function loadMatches() {
-  if (USE_MOCK) { MATCHES = MOCK_MATCHES; RESULTS = MOCK_RESULTS; DATA_SOURCE = 'mock'; return; }
   const box = document.getElementById('matchList');
   box.innerHTML = `<div class="bg-white rounded-xl shadow-card p-10 text-center text-ink-3 text-sm">
       <span class="inline-block w-4 h-4 border-2 border-sea-300 border-t-sea-600 rounded-full animate-spin align-middle mr-2"></span>正在加载最新赛程…
@@ -262,73 +258,42 @@ async function loadMatches() {
     const { matches = [], results = [], build = '' } = await res.json();
     API_BUILD = build;
     MATCHES = normalize(matches);
-    if (results.length) RESULTS = normalizeResults(results);   // 半个月赛果一并通过接口带回
-    DATA_SOURCE = 'live';
-    if (!MATCHES.length) throw new Error('接口返回 0 场赛程');
+    RESULTS = normalizeResults(results);       // 赛果和后端一起返回
   } catch (e) {
     LAST_ERR = e.message;
-    console.warn('[loadMatches] 接口失败，回退 mock：', e.message, '· HTTP', LAST_STATUS);
-    MATCHES = MOCK_MATCHES; RESULTS = MOCK_RESULTS; DATA_SOURCE = 'mock';
-    toast('实时数据获取失败，已切换到演示数据', false);
+    MATCHES = [];
+    RESULTS = [];
+    console.warn('[loadMatches] 读后端失败：', e.message, '· HTTP', LAST_STATUS);
   }
 }
 
-/* ============ Mock 回退数据 ============ */
-const MOCK_MATCHES = [
-
-  mk(0,19,0,'esports','LPL 夏季赛 · 季后赛','BLG','TES',
-     [{n:'B站',free:1},{n:'虎牙',free:1}],
-     {form:['BLG 近5场 4胜1负','TES 近5场 3胜2负'], h2h:'近6次交手 BLG 4胜2负', note:'季后赛败者组生死战，中路 knight 与 JackeyLove 的对位值得关注。'}, true),
-  mk(0,19,35,'football','中超 · 第 26 轮','上海海港','山东泰山',
-     [{n:'咪咕视频',free:1},{n:'央视频',free:1}],
-     {form:['海港 近5场 3胜2平','泰山 近5场 2胜2平1负'], h2h:'近6次交手海港 2胜3平1负', note:'榜首之争，武磊出战成疑，赛前 1 小时公布首发。'}, true),
-  mk(0,20,0,'badminton','中国公开赛 · 1/4决赛','陈雨菲','安洗莹',
-     [{n:'央视体育',free:1},{n:'优酷体育',free:0}],
-     {form:['陈雨菲 本站未失一局','安洗莹 赛季胜率 89%'], h2h:'生涯交手 陈雨菲 7胜8负', note:'头号种子对决，预计 3 局大战。'}, true),
-  mk(0,22,0,'football','西甲 · 第 8 轮','巴塞罗那','马德里竞技',
-     [{n:'爱奇艺体育',free:0}],
-     {form:['巴萨 近5场 4胜1平','马竞 近5场 3胜2负'], h2h:'近6次交手巴萨 3胜2平1负', note:'莱万对阵旧主，西蒙尼执教马竞第 700 场。'}),
-  /* —— 明天 —— */
-  mk(1,3,0,'football','欧冠 · 小组赛第 3 轮','皇家马德里','曼城',
-     [{n:'咪咕视频',free:1},{n:'爱奇艺体育',free:0}],
-     {form:['皇马 近5场 4胜1负','曼城 近5场 5胜'], h2h:'近6次欧冠交手 皇马 3胜1平2负', note:'哈兰德伤愈复出进入大名单；贝林厄姆累积黄牌停赛。'}, true),
-  mk(1,3,0,'football','欧冠 · 小组赛第 3 轮','拜仁慕尼黑','巴黎圣日耳曼',
-     [{n:'爱奇艺体育',free:0}],
-     {form:['拜仁 近5场 5胜','巴黎 近5场 3胜2负'], h2h:'近6次交手拜仁 4胜2负', note:'姆巴佩战旧主，安联球场满座。'}),
-  mk(1,16,0,'esports','LCK 夏季赛 · 决赛','GEN','T1',
-     [{n:'虎牙',free:1}],
-     {form:['GEN 常规赛 18-0','T1 季后赛连胜 3 轮'], h2h:'近6次交手 GEN 4胜2负', note:'Faker 冲击个人第 11 座联赛冠军。'}, true),
-  mk(1,19,0,'esports','无畏契约 · 大师赛','EDG','FPX',
-     [{n:'B站',free:1},{n:'斗鱼',free:1}],
-     {form:['EDG 近5场 4胜1负','FPX 近5场 3胜2负'], h2h:'本年度交手 EDG 3胜1负', note:'CN 赛区内战，胜者晋级四强。'}),
-  mk(1,19,0,'badminton','中国公开赛 · 半决赛','石宇奇','昆拉武特',
-     [{n:'央视体育',free:1}],
-     {form:['石宇奇 近10场 9胜','昆拉武特 近10场 7胜'], h2h:'生涯交手 石宇奇 5胜2负', note:'石宇奇主场冲击赛季第 4 冠。'}),
-  /* —— 后天 —— */
-  mk(2,2,45,'football','英超 · 第 7 轮','阿森纳','利物浦',
-     [{n:'咪咕视频',free:1},{n:'爱奇艺体育',free:0}],
-     {form:['阿森纳 近5场 4胜1平','利物浦 近5场 4胜1负'], h2h:'近6次交手 2胜2平2负', note:'榜首大战，萨卡与萨拉赫的边路对决。'}),
-  mk(2,14,0,'badminton','中国公开赛 · 决赛','待定','待定',
-     [{n:'央视体育',free:1}],
-     {form:[], h2h:'—', note:'决赛日：五个单项依次进行，中午 12 点开始。'}),
-  mk(2,17,0,'esports','DOTA2 国际邀请赛','LGD','Spirit',
-     [{n:'B站',free:1}],
-     {form:['LGD 小组赛 12-2','Spirit 小组赛 10-4'], h2h:'近6次交手 LGD 2胜4负', note:'TI 淘汰赛胜者组首轮。'}),
-  mk(2,19,35,'football','中超 · 第 27 轮','北京国安','上海申花',
-     [{n:'央视频',free:1},{n:'咪咕视频',free:1}],
-     {form:['国安 近5场 2胜3负','申花 近5场 4胜1负'], h2h:'近6次交手申花 3胜2平1负', note:'京沪德比，工体门票已售罄。'}),
-];
-
-/* 赛果：优先用接口 /api/matches 返回的 results 字段；接口拿不到才回退这几条示例 */
-function mockAgo(daysAgo, hh, mm){
-  const d = new Date(); d.setDate(d.getDate()-daysAgo); d.setHours(hh,mm,0,0); return d.toISOString();
+/* ============ 从后端读取「我的提醒」（存在数据库里，刷新不丢） ============ */
+async function loadFollows(){
+  try {
+    const res = await fetch(`${API_BASE}/api/follows`, { cache: 'no-store' });
+    if (!res.ok) return;
+    const { follows = [] } = await res.json();
+    const reminded = new Set(follows.filter(f => f.reminded).map(f => f.matchId));
+    MATCHES.forEach(m => { m.remind = reminded.has(m.id); });
+  } catch {
+    /* 后端没连上就保持默认（没提醒），页面照常显示 */
+  }
 }
-const MOCK_RESULTS = [
-  {utcDate:mockAgo(1,21,30), sport:'football', league:'英超 · 第 6 轮', home:'曼联', away:'切尔西', score:'2 : 1'},
-  {utcDate:mockAgo(1,19,0),  sport:'esports',  game:'lol', league:'LPL · 季后赛', home:'JDG', away:'WBG', score:'3 : 1'},
-  {utcDate:mockAgo(2,20,0),  sport:'badminton',league:'中国公开赛', home:'郑思维/黄雅琼', away:'渡边勇大/东野有纱', score:'2 : 0'},
-];
-let RESULTS = normalizeResults(MOCK_RESULTS);
+
+/* 把一条提醒状态发给后端保存（打开 / 关闭） */
+async function saveFollow(id, reminded){
+  try {
+    await fetch(`${API_BASE}/api/follows`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ matchId: id, reminded }),
+    });
+  } catch {
+    toast('提醒没保存成功（后端没连上）', false);
+  }
+}
+
+let RESULTS = [];
 
 /* ================= 状态 ================= */
 let curDay = 0, curSport = 'all', spoiler = false;
@@ -346,13 +311,23 @@ function labelMatches(){
 function renderDateStrip(){
   const box = document.getElementById('dateStrip');
   box.innerHTML = '';
-  // 先统计每天有多少场，直接标在日期上 —— 15 天跨度里用户要一眼看出哪天值得看
-  const cntByDay = {};
-  MATCHES.forEach(m => { cntByDay[m.day] = (cntByDay[m.day] || 0) + 1; });
+  // 先统计每天有多少场，直接标在日期上 —— 15 天跨度里用户要一眼看出哪天值得看。
+  // ⚠️ 羽毛球超过每日上限的部分不会显示，所以这里也按上限算，
+  //    免得日期条写着「155 场」、点进去只有 10 场。
+  const stat = {};
+  MATCHES.forEach(m => {
+    const s = stat[m.day] || (stat[m.day] = { total: 0, badminton: 0 });
+    s.total++;
+    if (m.sport === 'badminton') s.badminton++;
+  });
+  const shownCount = (i) => {
+    const s = stat[i];
+    return s ? (s.total - s.badminton) + Math.min(s.badminton, BADMINTON_PER_DAY) : 0;
+  };
 
   for(let i=0;i<=LOOKAHEAD_DAYS;i++){
     const d = new Date(); d.setDate(d.getDate()+i);
-    const cnt = cntByDay[i] || 0;
+    const cnt = shownCount(i);
     const active = i===curDay;
     const label = DAY_LABEL[i] ?? `周${WD[d.getDay()]}`;
     const b = document.createElement('button');
@@ -374,13 +349,25 @@ function renderDateStrip(){
   if(bt) bt.classList.toggle('hidden', curDay === 0);
 }
 
-/* ================= 渠道徽章 ================= */
+/* ================= 渠道徽章（有网址的，点一下直接跳过去） ================= */
 function chBadges(chs){
-  return chs.map(c=>`<span class="text-[11px] font-semibold px-2.5 py-1 rounded-full ${c.free?'bg-[#E6F7EF] text-[#1E8A66]':'bg-sea-100 text-sea-700'}">${c.n}${c.free?'·免费':''}</span>`).join('');
+  return chs.map(c=>{
+    const cls = `text-[11px] font-semibold px-2.5 py-1 rounded-full ${c.free?'bg-[#E6F7EF] text-[#1E8A66]':'bg-sea-100 text-sea-700'}`;
+    const label = `${c.n}${c.free?'·免费':''}`;
+    return c.url
+      ? `<a href="${c.url}" target="_blank" rel="noopener" onclick="event.stopPropagation()" class="${cls} hover:underline">${label} ↗</a>`
+      : `<span class="${cls}">${label}</span>`;
+  }).join('');
 }
+
+/* 对阵文案：羽毛球「抽签未出」的赛事级卡片没有对手，只显示赛事名，不显示 "vs" */
+function vsText(m){ return m.away ? `${m.home} <span class="text-ink-3 font-normal">vs</span> ${m.away}` : m.home; }
+function vsPlain(m){ return m.away ? `${m.home} vs ${m.away}` : m.home; }
 
 /* ================= 赛程卡片 ================= */
 function timeTag(m){
+  // 羽毛球的开赛时刻上游只给到「天」（time='待定'/'全天'），无从判断是否正在进行
+  if(m.time === '待定' || m.time === '全天') return '';
   const now = new Date();
   if(m.day===0 && m.dt < now) return `<span class="text-[10px] font-bold text-ok">进行中</span>`;
   if(m.day===1 && m.dt.getHours()<8) return `<span class="text-[10px] font-bold text-warn">明晨</span>`;
@@ -390,8 +377,18 @@ function timeTag(m){
 
 function renderMatches(){
   const list = document.getElementById('matchList');
-  const ms = MATCHES.filter(m=>m.day===curDay && (curSport==='all'||m.sport===curSport))
-                    .sort((a,b)=>a.dt-b.dt);
+  let ms = MATCHES.filter(m=>m.day===curDay && (curSport==='all'||m.sport===curSport))
+                  .sort((a,b)=>a.dt-b.dt);
+
+  // 羽毛球当天超过上限时，只留开赛最早的前 N 场，其余不渲染
+  const badminton = ms.filter(m=>m.sport==='badminton');
+  let badmintonHidden = 0;
+  if(badminton.length > BADMINTON_PER_DAY){
+    const keep = new Set(badminton.slice(0, BADMINTON_PER_DAY).map(m=>m.id));
+    ms = ms.filter(m=>m.sport!=='badminton' || keep.has(m.id));
+    badmintonHidden = badminton.length - BADMINTON_PER_DAY;
+  }
+
   if(!ms.length){
     list.innerHTML = `<div class="bg-white rounded-xl shadow-card p-10 text-center text-ink-3 text-sm">这一天没有该项目的比赛，看看别的项目吧</div>`;
     return;
@@ -413,10 +410,10 @@ function renderMatches(){
         </div>
         <div class="flex-1 min-w-0">
           <div class="flex items-center gap-2">
-            <span class="font-semibold text-[15px] truncate">${m.home} <span class="text-ink-3 font-normal">vs</span> ${m.away}</span>
+            <span class="font-semibold text-[15px] truncate">${vsText(m)}</span>
             ${m.followed?`<svg width="12" height="12" viewBox="0 0 24 24" fill="#F5C542" stroke="#E0B02A" stroke-width="1.5" class="flex-shrink-0"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>`:''}
           </div>
-          <div class="text-xs text-ink-3 mt-0.5">${GAME_ICON[m.game] || SPORT_ICON[m.sport]} ${m.league}${m.bo?` <span class="text-sea-600 font-semibold">· ${m.bo}</span>`:''}</div>
+          <div class="text-xs text-ink-3 mt-0.5">${GAME_ICON[m.game] || SPORT_ICON[m.sport]} ${m.league}${m.bo?` <span class="text-sea-600 font-semibold">· ${m.bo}</span>`:''}${m.pending && m.stage?` <span class="text-ink-3">· ${m.stage}</span>`:''}</div>
           <div class="hidden sm:flex gap-1.5 mt-2 flex-wrap">${chBadges(m.channels)}</div>
         </div>
         <button onclick="event.stopPropagation();toggleRemind('${m.id}')" title="开赛前 30 分钟提醒"
@@ -426,7 +423,8 @@ function renderMatches(){
           </svg>
         </button>
       </div>`).join('')}
-    </div>`).join('');
+    </div>`).join('')
+    + (badmintonHidden ? `<div class="text-center text-xs text-ink-3 py-2">当天还有 ${badmintonHidden} 场羽毛球未显示</div>` : '');
 }
 
 /* ================= 赛果回顾（防剧透） ================= */
@@ -508,10 +506,13 @@ function collapseResults(key){ expandedDays.delete(key); renderResults(); }
 /* ================= 提醒 ================= */
 function toggleRemind(id){
   const m = MATCHES.find(x=>x.id===id);
+  if (!m) return;
   m.remind = !m.remind;
-  toast(m.remind ? `已设置提醒 · ${m.home} vs ${m.away}，开赛前 30 分钟通知你（附直播链接）`
-                 : `已取消提醒 · ${m.home} vs ${m.away}`, m.remind);
+  const label = vsPlain(m);      // 羽毛球可能没有对手（抽签未出）
+  toast(m.remind ? `已设置提醒 · ${label}，开赛前 30 分钟通知你（附直播链接）`
+                 : `已取消提醒 · ${label}`, m.remind);
   renderMatches(); updateFollowCount();
+  saveFollow(id, m.remind);          // 存进数据库，刷新页面也还在
 }
 function updateFollowCount(){
   const n = MATCHES.filter(m=>m.remind||m.followed).length;
@@ -522,6 +523,7 @@ function updateFollowCount(){
 function openModal(id){
   const m = MATCHES.find(x=>x.id===id);
   const info = m.info;
+  const watchUrl = (m.channels.find(c => c.url) || {}).url || null;   // 有网址才给「去观赛」按钮
   // 免费数据源没有情报数据，优雅降级而不是报错
   const infoBlock = info ? `
       <div class="mt-5 bg-sea-50 rounded-xl p-4">
@@ -538,8 +540,8 @@ function openModal(id){
       <div class="flex items-start justify-between gap-3">
         <div>
           <div class="text-[11px] font-bold text-ink-3 tracking-wider">${GAME_ICON[m.game] || SPORT_ICON[m.sport]} ${m.league}</div>
-          <h3 class="text-xl font-bold mt-1">${m.home} <span class="text-ink-3 font-normal">vs</span> ${m.away}</h3>
-          <div class="text-sm text-sea-700 font-num font-bold mt-1">${m.dateLabel||DAY_LABEL[m.day]} ${m.time} 开赛${m.bo?` · ${m.bo}`:''}</div>
+          <h3 class="text-xl font-bold mt-1">${vsText(m)}</h3>
+          <div class="text-sm text-sea-700 font-num font-bold mt-1">${m.dateLabel||DAY_LABEL[m.day]} ${m.time==='待定'?'开赛时间待定':m.time+' 开赛'}${m.bo?` · ${m.bo}`:''}${m.pending&&m.stage?` · ${m.stage}`:''}</div>
         </div>
         <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-sea-50 hover:bg-sea-100 flex items-center justify-center text-ink-2 flex-shrink-0">✕</button>
       </div>
@@ -551,8 +553,11 @@ function openModal(id){
           class="flex-1 ${m.remind?'bg-sea-100 text-sea-700':'bg-daisy hover:bg-daisy-hover text-[#5C4400]'} font-semibold text-sm py-3 rounded-full transition-colors">
           ${m.remind?'已设置提醒 · 点击取消':'开赛前 30 分钟提醒我'}
         </button>
-        <a href="#" onclick="event.preventDefault();toast('实际产品将跳转到直播平台（需接入各家深链）',true)"
-          class="flex-1 bg-sea-500 hover:bg-sea-600 text-white font-semibold text-sm py-3 rounded-full text-center transition-colors">去观赛</a>
+        ${watchUrl
+          ? `<a href="${watchUrl}" target="_blank" rel="noopener"
+              class="flex-1 bg-sea-500 hover:bg-sea-600 text-white font-semibold text-sm py-3 rounded-full text-center transition-colors">去观赛 ↗</a>`
+          : `<a href="javascript:void(0)" onclick="toast('这场暂时没有可跳转的观看入口',false)"
+              class="flex-1 bg-sea-100 text-sea-700 font-semibold text-sm py-3 rounded-full text-center transition-colors">暂无观看入口</a>`}
       </div>
     </div>`;
   const md = document.getElementById('modal');
@@ -579,8 +584,12 @@ function tick(){
   const now = new Date();
   const next = MATCHES.filter(m=>m.dt>now).sort((a,b)=>a.dt-b.dt)[0];
   const tEl = document.getElementById('cdTime'), nEl = document.getElementById('cdTitle');
-  if(!next){nEl.textContent='近期赛事已播完';tEl.textContent='--:--:--';return;}
-  nEl.textContent = `最近一场 · ${next.home} vs ${next.away}`;
+  if(!next){
+    nEl.textContent = MATCHES.length ? '近期赛事已播完' : '暂无赛程数据';
+    tEl.textContent = '--:--:--';
+    return;
+  }
+  nEl.textContent = `最近一场 · ${vsPlain(next)}`;
   let s = Math.max(0, Math.floor((next.dt-now)/1000));
   const h = String(Math.floor(s/3600)).padStart(2,'0'), m2 = String(Math.floor(s%3600/60)).padStart(2,'0'), ss = String(s%60).padStart(2,'0');
   tEl.textContent = `${h}:${m2}:${ss}`;
@@ -630,56 +639,43 @@ document.getElementById('spoilerSwitch').onclick = ()=>{
 document.getElementById('followBtn').onclick = ()=>{
   const fs = MATCHES.filter(m=>m.remind||m.followed);
   if(!fs.length) return toast('还没有关注任何比赛或设置提醒', false);
-  toast(`已关注 ${fs.length} 场：` + fs.slice(0,3).map(m=>`${m.home} vs ${m.away}`).join('、') + (fs.length>3?' 等':''), true);
+  toast(`已关注 ${fs.length} 场：` + fs.slice(0,3).map(vsPlain).join('、') + (fs.length>3?' 等':''), true);
 };
 
 /* ================= 接口诊断横幅 =================
-   接口失败时，把「HTTP 状态码 + 最可能的根因 + 怎么修」直接写在页面上。
-   原因：404（没传 api 函数）、403（开了部署保护）、500（函数报错）、
-   0（网络不可达，国内访问 *.vercel.app 常被 DNS 污染）、
-   200 但 0 场（环境变量没配或没 Redeploy）—— 这几类在前端本来长得一模一样。 */
+   连不上后端、或后端数据库里还没数据时，把原因和「怎么修」写出来，
+   免得只看到一个空页面还不知道为什么。 */
 function renderApiDiag(){
   const el = document.getElementById('apiDiag');
   if (!el) return;
-  if (DATA_SOURCE === 'live'){
-    // 接口通了，但没自报版本号 → 线上跑的还是旧版函数。
-    // 这类「静默偏差」最坑：数据是全的、页面是活的，只有联赛名/队名还是英文。
-    if (!API_BUILD){
-      el.classList.remove('hidden');
-      el.innerHTML = `<b>接口在跑，但没自报版本号</b> —— 线上多半是旧版函数（本次中文化只改了函数层）。
-        现象会是足球联赛名/队名仍是英文。打开 <a class="underline font-semibold" href="${API_BASE}/api/selfcheck" target="_blank" rel="noopener">/api/selfcheck</a>
-        看 <code>build</code> 与 <code>zh.ok</code>：若没有 build 字段，说明这版没传上去，需要把整个「观赛预告-deploy」文件夹重传并 Redeploy。`;
-      return;
-    }
-    el.classList.add('hidden'); el.innerHTML=''; return;
+
+  // 后端读到了数据 → 一切正常，不用提示
+  if (LAST_STATUS === 200 && MATCHES.length > 0){
+    el.classList.add('hidden'); el.innerHTML = ''; return;
   }
 
   const s = LAST_STATUS;
   let kind, why, fix;
   if (s === 0){
-    kind = '请求没能发出去（网络层失败）';
-    why = LAST_ERR || '未知网络错误';
-    fix = '先确认这个域名你自己能打开。如果浏览器正常但这里报错，多半是 *.vercel.app 被 DNS 污染——绑定一个自有域名（Vercel → Settings → Domains）即可绕过。';
+    kind = '连不上后端';
+    why = LAST_ERR || '请求没能发出去';
+    fix = '确认后端在运行：在项目目录执行 node backend/server.js，然后访问 http://localhost:8787/。';
   } else if (s === 404){
-    kind = '接口不存在（HTTP 404）';
-    why = 'Vercel 项目里没有 api/matches.js —— 只传了 index.html，页面就只是个静态网页。';
-    fix = '确认仓库/上传目录里有 api/matches.js（用「观赛预告-deploy」整个文件夹传），再 Redeploy。';
-  } else if (s === 401 || s === 403){
-    kind = `访问被拒（HTTP ${s}）`;
-    why = 'Vercel 打开了 Deployment Protection（Vercel Authentication），匿名请求会被挡在登录页。';
-    fix = 'Vercel → Settings → Deployment Protection → 关闭 Vercel Authentication，然后重新访问。';
+    kind = '接口地址不对（HTTP 404）';
+    why = '后端没有 /api/matches 这个地址。';
+    fix = '确认打开的是自己后端发的页面（http://localhost:8787/），而不是别的旧地址。';
   } else if (s >= 500){
-    kind = `函数执行失败（HTTP ${s}）`;
-    why = '函数部署上去了，但运行时报错或超时。';
-    fix = '先打开下面的 /api/selfcheck 确认函数层；能打开就说明是上游或超时问题，再看 /api/matches 的 sources。';
+    kind = `后端出错（HTTP ${s}）`;
+    why = '后端在运行，但这次处理请求时报错了。';
+    fix = '看运行后端那个窗口里打印的报错信息。';
   } else if (s === 200){
-    kind = '接口通了，但返回 0 场赛程';
-    why = '多半是环境变量没配，或者配了但没重新部署。';
-    fix = '打开下面的 /api/matches，看 sources.missing_keys 里列了哪个变量；补上后必须 Redeploy 才生效。';
+    kind = '后端在跑，但数据库里还没有比赛';
+    why = '多半是还没配数据源 Key，或者第一次抓取还没跑完。';
+    fix = '把 backend/.env.example 复制成 backend/.env 填上 Key，再重启后端；也可打开 /api/selfcheck 看 missing_keys。';
   } else {
     kind = `接口异常（HTTP ${s}）`;
     why = LAST_ERR || '';
-    fix = '打开 /api/matches 和 /api/selfcheck 对照排查。';
+    fix = '打开 /api/selfcheck 看看后端状态。';
   }
 
   el.classList.remove('hidden');
@@ -689,7 +685,7 @@ function renderApiDiag(){
     `<div class="mt-1 text-ink-3">怎么修：${fix}</div>` +
     `<div class="mt-2 flex flex-wrap gap-3 text-[11px]">` +
       `<a class="underline font-semibold" href="${API_BASE}/api/matches" target="_blank" rel="noopener">打开 /api/matches</a>` +
-      `<a class="underline font-semibold" href="${API_BASE}/api/selfcheck?probe=1" target="_blank" rel="noopener">打开 /api/selfcheck（函数自检）</a>` +
+      `<a class="underline font-semibold" href="${API_BASE}/api/selfcheck" target="_blank" rel="noopener">打开 /api/selfcheck</a>` +
       `<a class="underline font-semibold" href="javascript:location.reload()">重新加载</a>` +
     `</div>`;
 }
@@ -697,26 +693,26 @@ function renderApiDiag(){
 /* ================= 初始化 ================= */
 (async function init(){
   renderDateStrip();
-  renderResults();                       // 先用示例赛果占位，避免首屏空白
-  document.getElementById('matchList').innerHTML = '';
-  await loadMatches();                   // 先取数（赛程 + 半个月赛果一并带回），再渲染
+  await loadMatches();                   // 先取数（赛程 + 赛果，都来自后端数据库）
+  await loadFollows();                   // 再把后端存过的提醒状态贴回列表
   labelMatches();
   renderDateStrip();                     // 拿到真实数据后刷新日期条上的「每天几场」
   const badge = document.getElementById('srcBadge');
   if (badge) {
-    badge.textContent = DATA_SOURCE === 'live'
-      ? `实时数据 · 未来 15 天 ${MATCHES.length} 场 · 赛果 ${RESULTS.length} 场 · ${new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})} 更新 · ${API_BUILD ? `接口 ${API_BUILD}` : '接口未报版本·疑旧版'}`
-      : `演示数据 · 接口 ${LAST_STATUS || '未响应'}${LAST_ERR ? `（${LAST_ERR}）` : ''} · ${MATCHES.length} 场示例`;
-    badge.className = `text-[11px] font-semibold px-2.5 py-1 rounded-full backdrop-blur ${DATA_SOURCE==='live'?'bg-white/70 text-deep-800':'bg-daisy-soft text-[#7A5B00]'}`;
+    const ok = LAST_STATUS === 200;
+    badge.textContent = ok
+      ? `数据库 · 未来 15 天 ${MATCHES.length} 场 · 赛果 ${RESULTS.length} 场 · ${new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})} 更新${API_BUILD ? ` · ${API_BUILD}` : ''}`
+      : `后端未连接 · ${LAST_STATUS || '无响应'}${LAST_ERR ? `（${LAST_ERR}）` : ''}`;
+    badge.className = `text-[11px] font-semibold px-2.5 py-1 rounded-full backdrop-blur ${ok?'bg-white/70 text-deep-800':'bg-daisy-soft text-[#7A5B00]'}`;
   }
   renderApiDiag();                       // 接口失败时把确切原因显示出来
-  renderResults();                       // 接口拿到赛果就重绘（拿不到则保持示例）
+  renderResults();                       // 用后端返回的赛果重绘
   renderMatches(); updateFollowCount(); tick();
   setInterval(tick, 1000);
   // 页面可见时自动刷新赛程（切回标签页不会看到过期数据）
   document.addEventListener('visibilitychange', async ()=>{
-    if(!document.hidden && !USE_MOCK){
-      await loadMatches(); labelMatches(); renderDateStrip(); renderMatches(); renderResults(); renderApiDiag(); updateFollowCount();
+    if(!document.hidden){
+      await loadMatches(); await loadFollows(); labelMatches(); renderDateStrip(); renderMatches(); renderResults(); renderApiDiag(); updateFollowCount();
     }
   });
 })();
